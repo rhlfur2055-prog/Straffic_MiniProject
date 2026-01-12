@@ -379,3 +379,154 @@ ul {
     background: #f0f0f0;
     transform: translateY(-2px);
 }
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .layout-content {
+        padding: 130px 12px 30px;
+    }
+
+    .navbar-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap; /* Prevent wrapping */
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px; /* Reduced side padding */
+        gap: 4px; /* Reduced gap */
+        overflow-x: auto; /* Allow horizontal scroll if really needed */
+        scrollbar-width: none; /* Hide scrollbar */
+        -ms-overflow-style: none;
+    }
+    
+    .navbar-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-links {
+        order: 1;
+        flex: 0 0 auto; /* Don't shrink/grow weirdly */
+        display: flex;
+        gap: 2px;
+    }
+    
+    .nav-right {
+        order: 2;
+        flex: 0 0 auto;
+        display: flex;
+        gap: 4px;
+        margin-left: auto; /* Push to right */
+    }
+
+    .nav-link {
+        font-size: 0; /* Hide text by default on small screens */
+        padding: 6px;
+    }
+    
+    .nav-link .material-symbols-outlined {
+        font-size: 22px; /* Slightly larger icon */
+        margin-right: 0;
+    }
+    
+    /* Show text only for specific important items if needed, or keep icons only */
+    /* Example: Show '에스트레픽' text for home link */
+    .nav-item:first-child .nav-link {
+        font-size: 14px;
+        font-weight: 700;
+        padding-right: 8px;
+    }
+    
+    /* User name text in nav-right */
+    .nav-right .nav-item:first-child .nav-link {
+        font-size: 13px; /* Show username */
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block; /* Required for text-overflow */
+        line-height: 22px; /* Vertically center with icon */
+    }
+    
+    .nav-right .nav-item:first-child .nav-link .material-symbols-outlined {
+        float: left; /* Icon next to text */
+        margin-right: 4px;
+        font-size: 20px;
+    }
+    
+    /* Dropdown adjustments for mobile */
+    .dropdown-menu {
+        position: fixed; /* Use fixed for better mobile modal-like feel */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 80%;
+        max-width: 300px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 1100;
+        text-align: center;
+        padding: 15px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .nav-item.dropdown.active .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -50%) scale(1);
+        display: block;
+    }
+    
+    /* Overlay for dropdown */
+    .nav-item.dropdown.active::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 1090;
+        pointer-events: none; /* Let click pass through to close? No, JS handles toggle */
+    }
+
+    .dropdown-item {
+        font-size: 16px;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .table-container {
+        padding: 16px;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 12px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .modern-pagination li a {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
