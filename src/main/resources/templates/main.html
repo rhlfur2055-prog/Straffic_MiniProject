@@ -183,6 +183,37 @@
             font-weight: 500;
         }
 
+        .user-role.role-admin {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 6px 19px;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-role.role-admin::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
         .btn-logout {
             background: #eee;
             color: #333;
@@ -429,7 +460,7 @@
                         <span th:unless="${#authentication.principal instanceof T(com.example.straffic.oauth.PrincipalOauth2UserService.CustomOAuth2User)}"
                               th:text="${#authentication.name}">User</span>님
                     </div>
-                    <div class="user-role">
+                    <div class="user-role" th:classappend="${#authorization.expression('hasRole(''ADMIN'')')} ? 'role-admin'">
                         <span sec:authorize="hasRole('ADMIN')">관리자</span>
                         <span sec:authorize="!hasRole('ADMIN')">
                             일반 회원
