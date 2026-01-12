@@ -1,7 +1,6 @@
 package com.example.straffic.member.repository;
 
 import com.example.straffic.member.entity.MemberEntity;
-import com.example.straffic.member.interfaces.MemberServiceInterface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,11 +18,11 @@ public interface MemberRepository extends JpaRepository<MemberEntity, String> {
     @Query(value = """
                select id, name, tel 
               from mem1213 """, nativeQuery = true)
-    List<MemberServiceInterface> result();
+    List<MemberInfo> result();
 
     @Query(value = """
 select * 
 from mem1213
 """, nativeQuery = true)
-    Page<MemberServiceInterface> interpage(Pageable pageable);
+    Page<MemberInfo> interpage(Pageable pageable);
 }

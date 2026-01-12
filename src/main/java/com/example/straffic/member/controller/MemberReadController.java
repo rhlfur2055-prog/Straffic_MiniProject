@@ -1,7 +1,6 @@
 package com.example.straffic.member.controller;
 
 import com.example.straffic.member.entity.MemberEntity;
-import com.example.straffic.member.interfaces.MemberServiceInterface;
 import com.example.straffic.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

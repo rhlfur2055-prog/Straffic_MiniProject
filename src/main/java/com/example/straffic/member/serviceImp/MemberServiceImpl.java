@@ -2,7 +2,7 @@ package com.example.straffic.member.serviceImp;
 
 import com.example.straffic.member.dto.MemberCreateDTO;
 import com.example.straffic.member.entity.MemberEntity;
-import com.example.straffic.member.interfaces.MemberServiceInterface;
+import com.example.straffic.member.repository.MemberInfo;
 import com.example.straffic.member.repository.MemberRepository;
 import com.example.straffic.member.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +36,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberServiceInterface> memberOut() {
+    public List<MemberInfo> memberOut() {
         return memberRepository.result();
     }
 

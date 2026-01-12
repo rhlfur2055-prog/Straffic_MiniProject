@@ -2,7 +2,7 @@ package com.example.straffic.member.service;
 
 import com.example.straffic.member.dto.MemberCreateDTO;
 import com.example.straffic.member.entity.MemberEntity;
-import com.example.straffic.member.interfaces.MemberServiceInterface;
+import com.example.straffic.member.repository.MemberInfo;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.util.List;
 public interface MemberService {
     void memberinsert(MemberCreateDTO memberDTO, HttpServletResponse response);
 
-    List<MemberServiceInterface> memberOut();
+    List<MemberInfo> memberOut();
 
     List<MemberEntity> entityout();
 
