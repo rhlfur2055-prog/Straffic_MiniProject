@@ -39,13 +39,23 @@
                 댓글 <span th:text="${board.comments != null ? board.comments.size() : 0}" style="color:#e53935;">0</span>
             </div>
 
-            <div th:each="c : ${board.comments}" class="comment-item">
+            <div th:each="c : ${commentsSorted}" class="comment-item" th:classappend="${c.pinned} ? ' pinned'">
                 <div class="comment-meta">
                     <div>
                         <span class="comment-author" th:text="${c.author != null ? c.author.name : '알수없음'}">작성자</span>
                         <span class="comment-date" th:text="${#temporals.format(c.createdAt, 'yyyy-MM-dd HH:mm')}">2025-01-01</span>
                     </div>
                     <div class="comment-actions">
+                        <form th:if="${isAdmin and !c.pinned}"
+                              th:action="@{/board/comment/{commentId}/pin(commentId=${c.id})}"
+                              method="post" style="display:inline;">
+                            <button class="comment-btn" type="submit">상단 고정</button>
+                        </form>
+                        <form th:if="${isAdmin and c.pinned}"
+                              th:action="@{/board/comment/{commentId}/unpin(commentId=${c.id})}"
+                              method="post" style="display:inline;">
+                            <button class="comment-btn" type="submit">고정 해제</button>
+                        </form>
                         <form th:action="@{/board/comment/{commentId}/delete(commentId=${c.id})}" method="post" style="display:inline;" th:if="${isAdmin or (authName != null and c.author != null and c.author.id == authName)}">
                             <button class="comment-btn delete" type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
                         </form>

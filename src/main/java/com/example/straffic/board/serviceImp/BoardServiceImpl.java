@@ -117,6 +117,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
+    public BoardEntity getPrevious(Long id) {
+        return boardRepository.findFirstByIdGreaterThanOrderByIdAsc(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardEntity getNext(Long id) {
+        return boardRepository.findFirstByIdLessThanOrderByIdDesc(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<BoardEntity> top3ByViews() {
         return boardRepository.findTop3ByOrderByViewsDesc();
     }

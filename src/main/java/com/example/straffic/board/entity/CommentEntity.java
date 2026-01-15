@@ -31,6 +31,9 @@ public class CommentEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private boolean pinned = false;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -38,4 +41,3 @@ public class CommentEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
-

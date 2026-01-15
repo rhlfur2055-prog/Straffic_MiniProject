@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css(v=${#dates.createNow().time})}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</th:block>
+
+<body>
+<div layout:fragment="content">
+    <div class="dashboard-container">
+
+        <div class="dashboard-layout">
+            <aside class="dashboard-sidebar">
+                <div class="dashboard-sidebar-title">메뉴</div>
+                <nav class="dashboard-sidebar-nav">
+                    <a href="/admin/dashboard" class="dashboard-sidebar-item active">대시보드</a>
+                    <a href="/parking" class="dashboard-sidebar-item">주차장</a>
+                    <a href="/mobility/ktx" class="dashboard-sidebar-item">KTX</a>
+                    <a href="/mobility/bike" class="dashboard-sidebar-item">자전거</a>
+                    <a href="/mobility/subway" class="dashboard-sidebar-item">지하철</a>
+                    <a href="/board/list" class="dashboard-sidebar-item">게시판</a>
+                    <a href="/notice/list" class="dashboard-sidebar-item">공지사항</a>
+                    <a href="/security" class="dashboard-sidebar-item">보안관리</a>
+                </nav>
+            </aside>
+
+            <div class="dashboard-content">
+                <div class="dashboard-summary-row">
+                    <div class="summary-card parking">
+                        <div class="summary-title">주차장 전체 조회수 (오늘)</div>
+                        <div class="summary-value" th:text="${dailyViews != null ? dailyViews.parking : 0}">0</div>
+                    </div>
+                    <div class="summary-card ktx">
+                        <div class="summary-title">KTX 전체 조회수 (오늘)</div>
+                        <div class="summary-value" th:text="${dailyViews != null ? dailyViews.ktx : 0}">0</div>
+                    </div>
+                    <div class="summary-card bike">
+                        <div class="summary-title">자전거 전체 조회수 (오늘)</div>
+                        <div class="summary-value" th:text="${dailyViews != null ? dailyViews.bike : 0}">0</div>
+                    </div>
+                    <div class="summary-card subway">
+                        <div class="summary-title">지하철 전체 조회수 (오늘)</div>
+                        <div class="summary-value" th:text="${dailyViews != null ? dailyViews.subway : 0}">0</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-main">
+                    <section class="panel weekly-panel">
+                        <div class="panel-header">
+                            <h2>주간 조회수 비교</h2>
+                            <select id="weeklyPlatformSelect">
+                                <option value="ALL">전체 플랫폼</option>
+                                <option value="PARKING">주차장</option>
+                                <option value="KTX">KTX</option>
+                                <option value="BIKE">자전거</option>
+                                <option value="SUBWAY">지하철</option>
+                            </select>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="panel ktx-panel">
+                        <div class="panel-header">
+                            <h2>KTX 예약 현황</h2>
+                        </div>
+                        <div class="panel-body ktx-list">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>사용자 ID</th>
+                                    <th>인원</th>
+                                    <th>열차번호</th>
+                                    <th>출발지 → 도착지</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${ktxReservations}"
+                                    class="ktx-reservation-row"
+                                    th:data-user-id="${r.userId}"
+                                    th:data-people="${r.peopleCount}"
+                                    th:data-train-no="${r.trainNo}"
+                                    th:data-departure="${r.departure}"
+                                    th:data-arrival="${r.arrival}"
+                                    th:data-paid-at="${r.paidAt}"
+                                    th:data-amount="${r.amount}"
+                                    th:data-seat="${r.seatInfo}"
+                                    onclick="openReservationDetail(this)">
+                                    <td th:text="${r.userId}">user01</td>
+                                    <td th:text="${r.peopleCount}">2</td>
+                                    <td th:text="${r.trainNo}">KTX123</td>
+                                    <td>
+                                        <span th:text="${r.departure}">서울</span>
+                                        <span> → </span>
+                                        <span th:text="${r.arrival}">부산</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${ktxReservations == null or #lists.isEmpty(ktxReservations)}">
+                                    <td colspan="4" style="text-align:center; color:#777;">예약 내역이 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="ktx-pagination"
+                                 th:if="${ktxTotalPages != null and ktxTotalPages > 1}">
+                                <a class="ktx-page-link prev"
+                                   th:if="${ktxPage > 0}"
+                                   th:href="@{|/admin/dashboard?ktxPage=${ktxPage - 1}|}">이전</a>
+                                <span class="ktx-page-link disabled" th:if="${ktxPage == 0}">이전</span>
+
+                                <span th:each="i : ${#numbers.sequence(0, ktxTotalPages - 1)}">
+                                    <a th:if="${i != ktxPage}"
+                                       th:href="@{|/admin/dashboard?ktxPage=${i}|}"
+                                       th:text="${i + 1}"
+                                       class="ktx-page-link"></a>
+                                    <span th:if="${i == ktxPage}"
+                                          th:text="${i + 1}"
+                                          class="ktx-page-link active"></span>
+                                </span>
+
+                                <a class="ktx-page-link next"
+                                   th:if="${ktxPage + 1 < ktxTotalPages}"
+                                   th:href="@{|/admin/dashboard?ktxPage=${ktxPage + 1}|}">다음</a>
+                                <span class="ktx-page-link disabled"
+                                      th:if="${ktxPage + 1 >= ktxTotalPages}">다음</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel yearly-panel">
+                        <div class="panel-header">
+                            <h2>연간 조회수 비교</h2>
+                            <select id="yearlyPlatformSelect">
+                                <option value="ALL">전체 플랫폼</option>
+                                <option value="PARKING">주차장</option>
+                                <option value="KTX">KTX</option>
+                                <option value="BIKE">자전거</option>
+                                <option value="SUBWAY">지하철</option>
+                            </select>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="yearlyChart"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="panel below-panel">
+                        <div class="panel-header">
+                            <h2>게시판/공지</h2>
+                        </div>
+                        <div class="panel-body">
+                            <div class="dashboard-cards">
+                                <div class="dash-card">
+                                    <div class="dash-card-title">오늘 작성 글 / 전체</div>
+                                    <div class="dash-card-value">
+                                        <span th:text="${boardTodayCount}">0</span>
+                                        <span style="color:#999;"> / </span>
+                                        <span th:text="${boardTotalCount}">0</span>
+                                    </div>
+                                </div>
+                                <div class="dash-card">
+                                    <div class="dash-card-title">답변 / 미답변</div>
+                                    <div class="dash-card-value">
+                                        <span th:text="${boardAnsweredCount}">0</span>
+                                        <span style="color:#999;"> / </span>
+                                        <span th:text="${boardUnansweredCount}">0</span>
+                                    </div>
+                                </div>
+                                <div class="dash-card">
+                                    <div class="dash-card-title">최근 공지 3개</div>
+                                    <ul class="dash-card-list">
+                                        <li th:each="n : ${recent3Notices}">
+                                            <a th:href="@{/notice/view/{id}(id=${n.id})}" th:text="${n.title}">공지 제목</a>
+                                        </li>
+                                        <li th:if="${recent3Notices == null or #lists.isEmpty(recent3Notices)}" style="color:#999;">공지 없음</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ktxDetailModal" class="ktx-modal" style="display:none;">
+        <div class="ktx-modal-backdrop" onclick="closeReservationDetail()"></div>
+        <div class="ktx-modal-content">
+            <div class="ktx-modal-header">
+                <h3>KTX 예매 내역 상세</h3>
+                <button type="button" class="ktx-modal-close" onclick="closeReservationDetail()">×</button>
+            </div>
+            <div class="ktx-modal-body">
+                <div class="ktx-detail-summary">
+                    <span id="detailTrainNo"></span>
+                    <span id="detailRoute"></span>
+                    <span id="detailSeat"></span>
+                    <span id="detailAmount"></span>
+                </div>
+                <dl>
+                    <dt>사용자 ID</dt>
+                    <dd id="detailUserId"></dd>
+                </dl>
+                <dl>
+                    <dt>예매 인원</dt>
+                    <dd id="detailPeople"></dd>
+                </dl>
+                <dl>
+                    <dt>결제 시간</dt>
+                    <dd id="detailPaidAt"></dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let weeklyChart;
+        let yearlyChart;
+
+        function initWeeklyChart() {
+            const ctx = document.getElementById('weeklyChart');
+            if (!ctx) return;
+            const data = {
+                labels: /*[[${weeklyStats != null ? weeklyStats.labels : {'월','화','수','목','금','토','일'}}]]*/ ['월','화','수','목','금','토','일'],
+                datasets: [
+                    {
+                        label: '이번주',
+                        data: /*[[${weeklyStats != null ? weeklyStats.current : {10,20,30,25,15,40,35}}]]*/ [10,20,30,25,15,40,35],
+                        backgroundColor: 'rgba(51,51,51,0.7)'
+                    },
+                    {
+                        label: '전주',
+                        data: /*[[${weeklyStats != null ? weeklyStats.previous : {8,18,25,20,12,35,30}}]]*/ [8,18,25,20,12,35,30],
+                        backgroundColor: 'rgba(160,160,160,0.6)'
+                    }
+                ]
+            };
+            weeklyChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function initYearlyChart() {
+            const ctx = document.getElementById('yearlyChart');
+            if (!ctx) return;
+            const data = {
+                labels: /*[[${yearlyStats != null ? yearlyStats.labels : {'1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'}}]]*/ ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+                datasets: [
+                    {
+                        label: '올해',
+                        data: /*[[${yearlyStats != null ? yearlyStats.current : {100,120,90,140,160,180,200,190,170,150,130,110}}]]*/ [100,120,90,140,160,180,200,190,170,150,130,110],
+                        borderColor: 'rgba(51,51,51,0.9)',
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: '전년',
+                        data: /*[[${yearlyStats != null ? yearlyStats.previous : {80,100,85,120,140,150,170,165,150,130,110,100}}]]*/ [80,100,85,120,140,150,170,165,150,130,110,100],
+                        borderColor: 'rgba(180,180,180,0.9)',
+                        borderDash: [5,5],
+                        fill: false,
+                        tension: 0.2
+                    }
+                ]
+            };
+            yearlyChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function openReservationDetail(row) {
+            const modal = document.getElementById('ktxDetailModal');
+            if (!modal) return;
+
+            document.getElementById('detailUserId').textContent = row.dataset.userId || '';
+            document.getElementById('detailPeople').textContent = row.dataset.people || '';
+            document.getElementById('detailTrainNo').textContent = row.dataset.trainNo || '';
+            document.getElementById('detailRoute').textContent =
+                (row.dataset.departure || '') + ' → ' + (row.dataset.arrival || '');
+            document.getElementById('detailPaidAt').textContent = row.dataset.paidAt || '';
+            document.getElementById('detailAmount').textContent = row.dataset.amount || '';
+            document.getElementById('detailSeat').textContent = row.dataset.seat || '';
+
+            modal.style.display = 'block';
+        }
+
+        function closeReservationDetail() {
+            const modal = document.getElementById('ktxDetailModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initWeeklyChart();
+            initYearlyChart();
+
+            const weeklySelect = document.getElementById('weeklyPlatformSelect');
+            const yearlySelect = document.getElementById('yearlyPlatformSelect');
+
+            if (weeklySelect) {
+                weeklySelect.addEventListener('change', function () {
+                    const value = this.value;
+                });
+            }
+            if (yearlySelect) {
+                yearlySelect.addEventListener('change', function () {
+                    const value = this.value;
+                });
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

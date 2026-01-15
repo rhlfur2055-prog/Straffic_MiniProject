@@ -16,6 +16,8 @@ public interface BoardService {
     void delete(Long id, String requesterId, boolean requesterIsAdmin);
     Page<BoardEntity> list(BoardSearchDTO search);
     BoardEntity getAndIncreaseViews(Long id);
+    BoardEntity getPrevious(Long id);
+    BoardEntity getNext(Long id);
     List<BoardEntity> top3ByViews();
     byte[] getImageData(Long boardId);
     List<BoardEntity> pinnedBoards();

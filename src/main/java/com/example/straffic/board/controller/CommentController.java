@@ -34,6 +34,26 @@ public class CommentController {
         return "redirect:/board/view/" + boardId;
     }
 
+    @PostMapping("/comment/{commentId}/pin")
+    public String pin(@PathVariable Long commentId, Authentication auth) {
+        CommentEntity c = commentRepository.findById(commentId).orElseThrow(() -> new IllegalStateException("댓글을 찾을 수 없습니다"));
+        boolean isAdmin = auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin) throw new IllegalStateException("상단 고정 권한이 없습니다");
+        c.setPinned(true);
+        commentRepository.save(c);
+        return "redirect:/board/view/" + c.getBoard().getId();
+    }
+
+    @PostMapping("/comment/{commentId}/unpin")
+    public String unpin(@PathVariable Long commentId, Authentication auth) {
+        CommentEntity c = commentRepository.findById(commentId).orElseThrow(() -> new IllegalStateException("댓글을 찾을 수 없습니다"));
+        boolean isAdmin = auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin) throw new IllegalStateException("상단 고정 해제 권한이 없습니다");
+        c.setPinned(false);
+        commentRepository.save(c);
+        return "redirect:/board/view/" + c.getBoard().getId();
+    }
+
     @PostMapping("/comment/{commentId}/delete")
     public String delete(@PathVariable Long commentId, Authentication auth) {
         CommentEntity c = commentRepository.findById(commentId).orElseThrow(() -> new IllegalStateException("댓글을 찾을 수 없습니다"));
@@ -61,4 +81,3 @@ public class CommentController {
         return "redirect:/board/view/" + c.getBoard().getId();
     }
 }
-

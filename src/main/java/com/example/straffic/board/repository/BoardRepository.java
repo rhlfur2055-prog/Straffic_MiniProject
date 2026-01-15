@@ -15,6 +15,9 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     List<BoardEntity> findTop3ByOrderByViewsDesc();
     List<BoardEntity> findByPinnedTrueOrderByCreatedAtDesc();
 
+    BoardEntity findFirstByIdGreaterThanOrderByIdAsc(Long id);
+    BoardEntity findFirstByIdLessThanOrderByIdDesc(Long id);
+
     @Query("""
             select b from BoardEntity b
             where (:q is null or :q = '' 
@@ -27,5 +30,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
             order by b.createdAt desc
             """)
     Page<BoardEntity> search(@Param("q") String q, @Param("type") String type, @Param("excludeIds") List<Long> excludeIds, Pageable pageable);
-}
 
+    @Query("select count(b) from BoardEntity b where b.createdAt >= :start and b.createdAt < :end")
+    long countByCreatedAtBetween(@Param("start") java.time.LocalDateTime start,
+                                 @Param("end") java.time.LocalDateTime end);
+}
