@@ -5,116 +5,481 @@
 <body>
 <div layout:fragment="content">
     <style>
-        .subway-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        .search-box { position: relative; margin-bottom: 16px; }
-        .search-input { width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; }
-        .autocomplete-list { position:absolute; left:0; right:0; background:#fff; border:1px solid #0066ff; border-top:none; border-radius:0 0 8px 8px; max-height:240px; overflow:auto; display:none; z-index:10; }
-        .autocomplete-item { padding:10px 14px; border-bottom:1px solid #f1f1f1; cursor:pointer; }
-        .autocomplete-item:last-child { border-bottom:none; }
-        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
-        .stat-card { background:#fff; border:1px solid #eee; border-radius:12px; padding:16px; text-align:center; }
-        .arrival-section { background:#fff; border:1px solid #eee; border-radius:12px; padding:16px; display:none; }
-        .arrival-section.show { display:block; }
-        .train-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-        .train-direction-section { border:1px solid #eee; border-radius:8px; padding:12px; }
+        .layout-content {
+            padding: 80px 0 40px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subway-page {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .subway-container {
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .subway-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .subway-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            color: #111;
+        }
+
+        .subway-subtitle {
+            margin: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .subway-meta {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .subway-meta-label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .subway-layout {
+            display: grid;
+            grid-template-columns: 360px minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .subway-left {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-card,
+        .summary-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: #fafafa;
+            border-radius: 10px;
+            padding: 14px 12px;
+            text-align: left;
+            border: 1px solid #eee;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .subway-right {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .arrival-section {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 18px 18px 20px;
+            display: none;
+        }
+
+        .arrival-section.show {
+            display: block;
+        }
+
+        .arrival-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .arrival-station-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .arrival-updated {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        .train-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .train-direction-section {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px 12px 10px;
+            font-size: 0.9rem;
+        }
+
+        .train-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .train-line {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .train-time {
+            font-weight: 600;
+            color: #0066ff;
+        }
+
+        .train-middle-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        .train-bottom-row {
+            font-size: 0.85rem;
+            color: #0066ff;
+        }
+
+        .congestion-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .congestion-low { background: #e3f2fd; color: #1565c0; }
+        .congestion-mid { background: #fff9e6; color: #f57f17; }
+        .congestion-high { background: #ffebee; color: #c62828; }
+
+        .route-section {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 16px 18px 18px;
+            display: none;
+        }
+
+        .route-section.show {
+            display: block;
+        }
+
+        .route-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .route-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .route-form input {
+            flex: 1;
+            min-width: 120px;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .route-form button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .route-form button:hover {
+            background: #000;
+        }
+
+        .route-result {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        @media (max-width: 1024px) {
+            .subway-container {
+                padding: 30px 24px;
+            }
+
+            .subway-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .subway-left,
+            .subway-right {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .subway-container {
+                padding: 24px 16px;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                box-shadow: none;
+            }
+
+            .subway-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .subway-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .subway-title {
+                font-size: 1.35rem;
+            }
+
+            .train-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 
-    <div class="subway-container">
-        <h1>🚇 지하철 실시간</h1>
-        <p>역 이름을 검색해 실시간 도착 정보를 확인하세요</p>
+    <div class="subway-page">
+        <div class="subway-container">
+            <div class="subway-header">
+                <div>
+                    <h1 class="subway-title">지하철 실시간</h1>
+                    <p class="subway-subtitle">역 이름을 검색해 실시간 도착 정보와 혼잡도를 확인하세요</p>
+                </div>
+                <div class="subway-meta">
+                    <div><span class="subway-meta-label">서비스 범위</span> 수도권 1~9호선 및 신분당선</div>
+                    <div><span class="subway-meta-label">데이터 출처</span> 서울 열린데이터광장 · SK open API</div>
+                </div>
+            </div>
 
-        <div class="search-box">
-            <input id="stationSearch" class="search-input" placeholder="예: 강남, 서울역, 홍대입구">
-            <div id="autocomplete" class="autocomplete-list"></div>
-        </div>
+            <div class="subway-layout">
+                <div class="subway-left">
+                    <div class="search-card">
+                        <div class="section-title">역 검색</div>
+                        <div class="search-box">
+                            <input id="stationSearch" class="search-input" placeholder="예: 강남, 서울역, 홍대입구">
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="section-title">실시간 요약</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">총 역 수</div>
+                                <div class="stat-value" id="statTotal">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">표시 중인 열차</div>
+                                <div class="stat-value" id="statArrivals">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">지원 노선</div>
+                                <div class="stat-value">9</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">마지막 업데이트</div>
+                                <div class="stat-value" id="statUpdated">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="statTotal">0</div>
-                <div class="stat-label">총 역 수</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="statArrivals">0</div>
-                <div class="stat-label">표시 중인 열차</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">9</div>
-                <div class="stat-label">노선</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="statUpdated">-</div>
-                <div class="stat-label">업데이트</div>
-            </div>
-        </div>
+                <div class="subway-right">
+                    <div id="arrivalSection" class="arrival-section">
+                        <div class="arrival-header">
+                            <div class="arrival-station-name" id="arrivalStationName">-</div>
+                            <div class="arrival-updated" id="arrivalUpdated">-</div>
+                        </div>
+                        <div class="train-grid" id="trainGrid"></div>
+                    </div>
 
-        <div id="arrivalSection" class="arrival-section">
-            <div class="arrival-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:8px;">
-                <div class="arrival-station-name" id="arrivalStationName">-</div>
-                <div class="arrival-updated" id="arrivalUpdated">-</div>
+                    <div id="routeSection" class="route-section">
+                        <div class="route-title">출발역과 도착역을 입력해 예상 소요 시간을 확인하세요</div>
+                        <div class="route-form">
+                            <input id="startStation" placeholder="출발역 예: 강남">
+                            <input id="endStation" placeholder="도착역 예: 시청">
+                            <button id="routeSearchButton" type="button">경로 조회</button>
+                        </div>
+                        <div class="route-result" id="routeResult"></div>
+                    </div>
+                </div>
             </div>
-            <div class="train-grid" id="trainGrid"></div>
         </div>
     </div>
 
     <script>
         const input = document.getElementById('stationSearch');
-        const list = document.getElementById('autocomplete');
         const trainGrid = document.getElementById('trainGrid');
-        const section = document.getElementById('arrivalSection');
-        const statTotal = document.getElementById('statTotal');
+        const arrivalSection = document.getElementById('arrivalSection');
         const statArrivals = document.getElementById('statArrivals');
         const statUpdated = document.getElementById('statUpdated');
+        const arrivalStationName = document.getElementById('arrivalStationName');
+        const arrivalUpdated = document.getElementById('arrivalUpdated');
+        const startStationInput = document.getElementById('startStation');
+        const endStationInput = document.getElementById('endStation');
+        const routeSearchButton = document.getElementById('routeSearchButton');
+        const routeResult = document.getElementById('routeResult');
 
-        input.addEventListener('input', async () => {
+        input.addEventListener('keydown', async (e) => {
+            if (e.key !== 'Enter') return;
             const keyword = input.value.trim();
-            if (!keyword) { list.style.display = 'none'; return; }
-            const response = await fetch(`/subway/api/search?keyword=${encodeURIComponent(keyword)}`);
-            const items = await response.json();
-            list.innerHTML = items.map(it => `<div class="autocomplete-item" data-name="${it.stationName}">${it.stationName} <span style="color:#777; font-size:12px;">(${it.lineName})</span></div>`).join('');
-            list.style.display = items.length ? 'block' : 'none';
+            if (!keyword) return;
+            await searchArrival(keyword);
         });
 
-        list.addEventListener('click', async (e) => {
-            const item = e.target.closest('.autocomplete-item');
-            if (!item) return;
-            const stationName = item.dataset.name;
-            list.style.display = 'none';
-            input.value = stationName;
-            const response = await fetch(`/subway/api/arrival/${encodeURIComponent(stationName.replace(/역$/,''))}`);
-            const data = await response.json();
-            document.getElementById('arrivalStationName').textContent = stationName;
-            const d = new Date();
-            statUpdated.textContent = d.toLocaleTimeString();
-            section.classList.add('show');
-            trainGrid.innerHTML = renderArrivals(data.arrivals || []);
-            statArrivals.textContent = (data.arrivals || []).length;
-        });
-
-        function renderArrivals(arrivals) {
-            if (!arrivals.length) return '<div style="grid-column: 1/-1; color:#777;">도착 정보가 없습니다</div>';
-            return arrivals.map(a => `
-                <div class="train-direction-section">
-                    <div style="display:flex; justify-content:space-between;">
-                        <div><strong>${a.direction}</strong> · ${a.trainType}</div>
-                        <div>${a.carriages}</div>
-                    </div>
-                    <div style="margin-top:8px; display:flex; justify-content:space-between;">
-                        <div>목적지: ${a.destination}</div>
-                        <div>혼잡도: ${a.congestion}</div>
-                    </div>
-                    <div style="margin-top:8px;">도착까지 약 ${a.arrivalTime}분 · 남은 역 ${a.stationsBefore}개</div>
-                    <div style="margin-top:8px; color:#0066ff">${a.status}</div>
-                </div>
-            `).join('');
+        async function searchArrival(stationName) {
+            try {
+                const response = await fetch(`/subway/api/arrival?stationName=${encodeURIComponent(stationName)}`);
+                if (!response.ok) {
+                    return;
+                }
+                const data = await response.json();
+                const arrivals = data.arrivals || [];
+                arrivalStationName.textContent = data.stationName || stationName;
+                const now = new Date();
+                const timeText = now.toLocaleTimeString();
+                arrivalUpdated.textContent = timeText;
+                statUpdated.textContent = timeText;
+                arrivalSection.classList.add('show');
+                trainGrid.innerHTML = renderArrivals(arrivals);
+                statArrivals.textContent = arrivals.length;
+            } catch (e) {
+            }
         }
 
-        (async () => {
-            const r = await fetch('/subway/api/stations/stats');
-            const d = await r.json();
-            if (typeof d.totalStations === 'number') {
-                statTotal.textContent = d.totalStations;
+        function renderArrivals(arrivals) {
+            if (!arrivals || !arrivals.length) {
+                return '<div style="grid-column: 1/-1; color:#777; font-size:0.9rem;">도착 정보가 없습니다</div>';
             }
-        })();
+            return arrivals.map(a => {
+                const direction = a.direction || '';
+                const lineName = a.lineName || '';
+                const destination = a.destination || '';
+                const congestion = a.congestion || '';
+                const arrivalTime = a.arrivalTime != null ? a.arrivalTime : '-';
+                const status = a.status || '';
+
+                let congestionClass = 'congestion-low';
+                if (congestion.includes('혼잡')) {
+                    congestionClass = congestion.includes('매우') ? 'congestion-high' : 'congestion-mid';
+                }
+
+                return `
+                    <div class="train-direction-section">
+                        <div class="train-top-row">
+                            <div class="train-line"><strong>${direction}</strong> · ${lineName}</div>
+                            <div class="train-time">약 ${arrivalTime}분 후</div>
+                        </div>
+                        <div class="train-middle-row">
+                            <div>목적지: ${destination}</div>
+                            <div><span class="congestion-badge ${congestionClass}">${congestion || '정보 없음'}</span></div>
+                        </div>
+                        <div class="train-bottom-row">${status}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        routeSearchButton.addEventListener('click', async () => {
+            const start = startStationInput.value.trim();
+            const end = endStationInput.value.trim();
+            if (!start || !end) {
+                return;
+            }
+            try {
+                const response = await fetch(`/subway/api/route?startStation=${encodeURIComponent(start)}&endStation=${encodeURIComponent(end)}`);
+                if (!response.ok) {
+                    return;
+                }
+                const data = await response.json();
+                const minutes = data.durationMinutes;
+                const transfers = data.transfers;
+                routeResult.textContent = `${data.start} → ${data.end} 약 ${minutes}분 소요, 환승 ${transfers}회 예상`;
+                document.getElementById('routeSection').classList.add('show');
+            } catch (e) {
+            }
+        });
     </script>
 </div>
 </body>
