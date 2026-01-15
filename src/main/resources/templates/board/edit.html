@@ -6,26 +6,65 @@
 <body>
 <div layout:fragment="content">
     <style>
-        .notice-form-wrapper { background: white; padding: 24px; border-radius: 12px; max-width: 800px; margin: 0 auto; }
-        .notice-form-wrapper h1 { font-size: 1.4rem; margin-bottom: 20px; font-weight: 700; color: #333; }
-        .notice-form { display: flex; flex-direction: column; gap: 14px; }
-        .notice-form label { font-weight: 600; margin-bottom: 6px; display: block; color: #444; }
+        /* ktx.html과 동일한 상단 간격 및 레이아웃 적용 */
+        .layout-content {
+            padding: 80px 0 40px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notice-form-wrapper { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            width: 1150px;
+            max-width: 1400px; /* 자전거 페이지와 동일하게 1400px로 확장 */
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+        .notice-form-wrapper h1 { font-size: 2rem; margin-bottom: 30px; font-weight: 800; color: #111; border-bottom: 3px solid #333; padding-bottom: 20px; }
+        
+        .notice-form { display: flex; flex-direction: column; gap: 24px; }
+        .notice-form label { font-weight: 700; margin-bottom: 10px; display: block; color: #333; font-size: 1.1rem; }
+        
         .notice-form input[type="text"],
         .notice-form select,
-        .notice-form textarea { width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95rem; }
+        .notice-form textarea { width: 100%; padding: 16px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; box-sizing: border-box; transition: all 0.2s; }
         .notice-form input[type="text"]:focus,
-        .notice-form textarea:focus { outline: none; border-color: #333; }
-        .notice-form textarea { min-height: 250px; resize: vertical; line-height: 1.5; }
-        .notice-form input[type="file"] { padding: 6px 0; }
+        .notice-form textarea:focus { outline: none; border-color: #333; box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+        .notice-form textarea { min-height: 400px; resize: vertical; line-height: 1.6; }
+        .notice-form input[type="file"] { padding: 10px 0; font-size: 1rem; }
         
-        .checkbox-wrapper label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .checkbox-wrapper input[type="checkbox"] { width: 18px; height: 18px; accent-color: #333; }
+        .checkbox-wrapper label { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; accent-color: #333; cursor: pointer; }
+        .checkbox-wrapper span { font-weight: 600; color: #333; }
 
-        .notice-form .actions { margin-top: 20px; display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 20px; }
-        .btn-primary { padding: 10px 20px; border-radius: 6px; background: #333; color: #fff; border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+        .notice-form .actions { margin-top: 40px; display: flex; gap: 12px; border-top: 1px solid #eee; padding-top: 30px; }
+        .btn-primary { padding: 14px 28px; border-radius: 8px; background: #333; color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 1rem; transition: background 0.2s; }
         .btn-primary:hover { background: #000; }
-        .btn-secondary { padding: 10px 20px; border-radius: 6px; background: #fff; color: #555; text-decoration: none; border: 1px solid #ddd; font-weight: 600; font-size: 0.95rem; }
-        .btn-secondary:hover { background: #f5f5f5; color: #333; }
+        .btn-secondary { padding: 14px 28px; border-radius: 8px; background: #fff; color: #555; text-decoration: none; border: 1px solid #ddd; font-weight: 700; font-size: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-secondary:hover { background: #f5f5f5; color: #333; border-color: #bbb; }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .layout-content { padding: 60px 0 20px; }
+            .notice-form-wrapper { padding: 24px 20px; border-radius: 0; border: none; box-shadow: none; width: 414px; }
+            .notice-form-wrapper h1 { font-size: 1.6rem; margin-bottom: 24px; padding-bottom: 16px; }
+            
+            .notice-form { gap: 20px; }
+            .notice-form label { font-size: 1rem; margin-bottom: 8px; }
+            .notice-form input[type="text"], 
+            .notice-form textarea { padding: 14px; font-size: 1rem; }
+            .notice-form textarea { min-height: 300px; }
+            
+            .notice-form .actions { flex-direction: column; gap: 12px; margin-top: 30px; }
+            .btn-primary, .btn-secondary { width: 100%; padding: 16px; text-align: center; justify-content: center; font-size: 1.1rem; }
+            .btn-secondary { order: 1; } /* 취소 버튼을 아래로 */
+            .btn-primary { order: 0; }
+        }
     </style>
     <div class="notice-form-wrapper">
         <h1>게시글 수정</h1>

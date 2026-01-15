@@ -6,36 +6,155 @@
 <body>
 <div layout:fragment="content">
     <style>
-        .notice-form-wrapper { background: white; padding: 24px; border-radius: 12px; max-width: 800px; margin: 0 auto; }
-        .notice-form-wrapper h1 { font-size: 1.4rem; margin-bottom: 20px; }
-        .notice-form { display: flex; flex-direction: column; gap: 14px; }
-        .notice-form label { font-weight: 600; margin-bottom: 4px; display: block; }
+        .layout-content {
+            padding: 80px 0 40px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notice-form-wrapper { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            width: 100%;
+            max-width: 1400px; /* 자전거 페이지와 동일하게 1400px로 확장 */
+            margin: 0 auto; 
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+        
+        .notice-form-wrapper h1 { 
+            font-size: 2rem; 
+            margin-bottom: 30px; 
+            font-weight: 800; 
+            color: #111; 
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .notice-form { display: flex; flex-direction: column; gap: 24px; }
+        
+        .notice-form label { 
+            font-weight: 700; 
+            margin-bottom: 10px; 
+            display: block; 
+            color: #333; 
+            font-size: 1.05rem;
+        }
+
         .notice-form input[type="text"],
         .notice-form select,
-        .notice-form textarea { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #ddd; }
-        .notice-form textarea { min-height: 200px; resize: vertical; }
-        .notice-form .row-inline { display: flex; gap: 16px; align-items: center; }
-        .notice-form .row-inline > div { flex: 1; }
-        .notice-form .actions { margin-top: 16px; display: flex; gap: 10px; }
-        .btn-primary { padding: 8px 16px; border-radius: 6px; background: #333; color: #fff; border: none; cursor: pointer; }
+        .notice-form textarea { 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+            font-size: 1rem; 
+            background: #f9f9f9;
+            transition: all 0.2s;
+            box-sizing: border-box; 
+        }
+
+        .notice-form input[type="text"]#title,
+        .notice-form input[type="text"]#titleEdit {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: #fff;
+            border-color: #ccc;
+        }
+
+        .notice-form input[type="text"]:focus,
+        .notice-form select:focus,
+        .notice-form textarea:focus { 
+            outline: none; 
+            border-color: #333; 
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+        }
+
+        .notice-form textarea { 
+            min-height: 400px; 
+            resize: vertical; 
+            line-height: 1.6; 
+        }
+
+        .notice-form input[type="file"] { 
+            padding: 10px; 
+            background: #f1f1f1; 
+            border-radius: 8px; 
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .checkbox-wrapper label { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            cursor: pointer; 
+            padding: 10px 0;
+            font-size: 1.05rem;
+            user-select: none;
+        }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px; 
+            height: 20px; 
+            accent-color: #333;
+            cursor: pointer;
+        }
+        .checkbox-wrapper span {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notice-form .actions { margin-top: 40px; display: flex; gap: 12px; border-top: 1px solid #eee; padding-top: 30px; }
+        
+        .btn-primary { padding: 14px 28px; border-radius: 8px; background: #333; color: #fff; border: none; cursor: pointer; font-weight: 700; font-size: 1rem; transition: background 0.2s; }
         .btn-primary:hover { background: #000; }
-        .btn-secondary { padding: 8px 16px; border-radius: 6px; background: #eee; color: #333; text-decoration: none; border: 1px solid #ddd; }
-        .btn-secondary:hover { background: #e0e0e0; }
+        
+        .btn-secondary { padding: 14px 28px; border-radius: 8px; background: #fff; color: #555; text-decoration: none; border: 1px solid #ddd; font-weight: 700; font-size: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-secondary:hover { background: #f5f5f5; color: #333; border-color: #bbb; }
+
+        @media (max-width: 768px) {
+            .layout-content { padding: 60px 0 20px; }
+            .notice-form-wrapper { 
+                padding: 24px; 
+                margin: 20px 20px; 
+                width: 400px; 
+                max-width: 100%; 
+                border-radius: 12px; 
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+                border: 1px solid #ddd; 
+            }
+            .notice-form-wrapper h1 { font-size: 1.6rem; margin-bottom: 24px; padding-bottom: 16px; }
+            
+            .notice-form { gap: 20px; }
+            .notice-form label { font-size: 1rem; margin-bottom: 8px; }
+            .notice-form input[type="text"], 
+            .notice-form select,
+            .notice-form textarea { padding: 14px; font-size: 1rem; }
+            .notice-form textarea { min-height: 300px; }
+            
+            .notice-form .actions { flex-direction: column; gap: 12px; margin-top: 30px; }
+            .btn-primary, .btn-secondary { width: 100%; padding: 16px; text-align: center; justify-content: center; font-size: 1.1rem; }
+            .btn-secondary { order: 1; } 
+            .btn-primary { order: 0; }
+        }
     </style>
 
     <div class="notice-form-wrapper" sec:authorize="hasRole('ADMIN')">
-        <h1 th:text="${mode == 'edit'} ? '공지 수정' : '공지 등록'">공지 등록</h1>
+            <h1 th:text="${mode == 'edit'} ? '공지 수정' : '공지 등록'">공지 등록</h1>
 
-        <form th:if="${mode == 'create'}"
-              class="notice-form"
-              th:action="@{/notice/admin/create}"
-              method="post"
-              enctype="multipart/form-data">
-            <div>
-                <label for="title">제목</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            <div class="row-inline">
+            <form th:if="${mode == 'create'}"
+                  class="notice-form"
+                  th:action="@{/notice/admin/create}"
+                  method="post"
+                  enctype="multipart/form-data">
+                <div>
+                    <label for="title">제목</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
                 <div>
                     <label for="tag">태그</label>
                     <select id="tag" name="tag" required>
@@ -43,37 +162,35 @@
                         <option value="이벤트">이벤트</option>
                     </select>
                 </div>
-                <div>
+                <div class="checkbox-wrapper">
                     <label>
                         <input type="checkbox" name="pinned">
-                        상단 고정
+                        <span>상단 고정</span>
                     </label>
                 </div>
-            </div>
-            <div>
-                <label for="content">내용</label>
-                <textarea id="content" name="content" required></textarea>
-            </div>
-            <div>
-                <label for="image">이미지 업로드</label>
-                <input type="file" id="image" name="image">
-            </div>
-            <div class="actions">
-                <button type="submit" class="btn-primary">등록</button>
-                <a href="/notice/list" class="btn-secondary">목록</a>
-            </div>
-        </form>
+                <div>
+                    <label for="content">내용</label>
+                    <textarea id="content" name="content" required></textarea>
+                </div>
+                <div>
+                    <label for="image">이미지 업로드</label>
+                    <input type="file" id="image" name="image">
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn-primary">등록</button>
+                    <a href="/notice/list" class="btn-secondary">목록</a>
+                </div>
+            </form>
 
-        <form th:if="${mode == 'edit'}"
-              class="notice-form"
-              th:action="@{/notice/admin/update/{id}(id=${notice.id})}"
-              method="post"
-              enctype="multipart/form-data">
-            <div>
-                <label for="titleEdit">제목</label>
-                <input type="text" id="titleEdit" name="title" th:value="${notice.title}" required>
-            </div>
-            <div class="row-inline">
+            <form th:if="${mode == 'edit'}"
+                  class="notice-form"
+                  th:action="@{/notice/admin/update/{id}(id=${notice.id})}"
+                  method="post"
+                  enctype="multipart/form-data">
+                <div>
+                    <label for="titleEdit">제목</label>
+                    <input type="text" id="titleEdit" name="title" th:value="${notice.title}" required>
+                </div>
                 <div>
                     <label for="tagEdit">태그</label>
                     <select id="tagEdit" name="tag" required>
@@ -81,26 +198,25 @@
                         <option value="이벤트" th:selected="${notice.tag == '이벤트'}">이벤트</option>
                     </select>
                 </div>
-                <div>
+                <div class="checkbox-wrapper">
                     <label>
                         <input type="checkbox" name="pinned" th:checked="${notice.pinned}">
-                        상단 고정
+                        <span>상단 고정</span>
                     </label>
                 </div>
-            </div>
-            <div>
-                <label for="contentEdit">내용</label>
-                <textarea id="contentEdit" name="content" th:text="${notice.content}" required></textarea>
-            </div>
-            <div>
-                <label for="imageEdit">이미지 업로드 (등록 시 기존 이미지 교체)</label>
-                <input type="file" id="imageEdit" name="image">
-            </div>
-            <div class="actions">
-                <button type="submit" class="btn-primary">수정</button>
-                <a th:href="@{/notice/view/{id}(id=${notice.id})}" class="btn-secondary">취소</a>
-            </div>
-        </form>
+                <div>
+                    <label for="contentEdit">내용</label>
+                    <textarea id="contentEdit" name="content" th:text="${notice.content}" required></textarea>
+                </div>
+                <div>
+                    <label for="imageEdit">이미지 업로드 (등록 시 기존 이미지 교체)</label>
+                    <input type="file" id="imageEdit" name="image">
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn-primary">수정</button>
+                    <a th:href="@{/notice/view/{id}(id=${notice.id})}" class="btn-secondary">취소</a>
+                </div>
+            </form>
     </div>
 </div>
 </body>

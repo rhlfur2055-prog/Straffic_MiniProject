@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>주차 관리 대시보드 | Parking System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            max-width: 1200px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+
+        .trend-up {
+            color: #34d399;
+        }
+
+        .trend-down {
+            color: #f87171;
+        }
+
+        .chart-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            min-height: 400px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: rgba(30, 41, 59, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: #6366f1;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .action-btn span {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .btn-input i {
+            color: #60a5fa;
+        }
+
+        .btn-output i {
+            color: #f59e0b;
+        }
+
+        .btn-detail i {
+            color: #a78bfa;
+        }
+
+        .btn-delete i {
+            color: #f87171;
+        }
+
+        @media (max-width: 900px) {
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🚗 Smart Parking Dashboard</h1>
+                <p style="color: #94a3b8; margin-top: 5px;">실시간 주차 현황 및 통합 관리 시스템</p>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                System Online
+            </div>
+        </div>
+
+        <!-- 4개의 통계 카드 -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">현재 주차 차량</span>
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #60a5fa;">
+                        <i class="fas fa-car"></i>
+                    </div>
+                </div>
+                <div class="stat-value">42 <span style="font-size: 1rem; color: #94a3b8; font-weight: 400;">/ 100</span>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>지난 시간 대비 +12%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">오늘 누적 입차</span>
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #34d399;">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value">156</div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>어제 동시간 대비 +5%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">오늘 누적 수익</span>
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #fbbf24;">
+                        <i class="fas fa-won-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-value">845,000</div>
+                <div class="stat-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>목표 달성률 92%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">주차장 혼잡도</span>
+                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #f87171;">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                </div>
+                <div class="stat-value">42%</div>
+                <div class="stat-trend trend-down">
+                    <i class="fas fa-check"></i>
+                    <span style="color: #34d399;">여유 공간 충분</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-card"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <h3 style="margin-bottom: 20px; color: #e2e8f0; font-size: 1.5rem;">
+                    <i class="fas fa-qrcode" style="margin-right: 12px; color: #34d399;"></i>Mobile Pass
+                </h3>
+                <div
+                    style="background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 0 30px rgba(52, 211, 153, 0.2);">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://localhost:9595/parking/main"
+                        alt="Dashboard QR" style="width: 200px; height: 200px; display: block;">
+                </div>
+                <p style="color: #94a3b8; font-size: 1.1rem;">
+                    스마트폰으로 스캔하여<br>실시간 주차 현황을 확인하세요
+                </p>
+                <div style="margin-top: 25px;">
+                    <span class="status-badge"
+                        style="background: rgba(59, 130, 246, 0.15); border-color: #3b82f6; color: #60a5fa;">
+                        <i class="fas fa-wifi"></i> Remote Access
+                    </span>
+                </div>
+            </div>
+
+            <div class="action-grid">
+                <a href="/parking/input" class="action-btn btn-input">
+                    <i class="fas fa-edit"></i>
+                    <span>입차 등록</span>
+                </a>
+                <a href="/parking/output" class="action-btn btn-output">
+                    <i class="fas fa-calculator"></i>
+                    <span>출차 정산</span>
+                </a>
+                <a href="/parking/detail" class="action-btn btn-detail">
+                    <i class="fas fa-list-alt"></i>
+                    <span>상세 조회</span>
+                </a>
+                <a href="/parking/delete" class="action-btn btn-delete">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>기록 삭제</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script removed since Chart.js is no longer used -->
+</body>
+
+</html>

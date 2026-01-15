@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>입차 등록 | 주차 관리 시스템</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 800px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(51, 65, 85, 0.5);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #6366f1;
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        .parking-map-container {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            margin-top: 10px;
+        }
+
+        .parking-map {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .spot {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            color: #10b981;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spot:hover:not(.occupied) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .spot.occupied {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            color: #ef4444;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .spot.selected {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transform: scale(1.05);
+        }
+
+        .spot i {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .form-icon {
+            position: absolute;
+            right: 16px;
+            top: 42px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📥 차량 입차 등록</h1>
+            <p style="color: #94a3b8;">신규 차량 정보를 입력하고 주차 구역을 배정하세요</p>
+        </div>
+
+        <div class="form-card">
+            <form action="/api/parking/entry" method="post" id="entryForm">
+                <div class="form-group">
+                    <label class="form-label">차량 번호</label>
+                    <input type="text" name="carNumber" class="form-control" placeholder="예: 12가 3456" required>
+                    <i class="fas fa-car form-icon"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">차종 선택</label>
+                    <div style="position: relative;">
+                        <select name="carType" class="form-control" style="appearance: none;">
+                            <option value="일반">🚙 일반 승용차 (정상 요금)</option>
+                            <option value="경차">🚗 경차 (50% 할인)</option>
+                            <option value="전기차">⚡ 전기차 (30% 할인)</option>
+                            <option value="장애인">♿ 장애인 차량 (무료)</option>
+                        </select>
+                        <i class="fas fa-chevron-down form-icon" style="pointer-events: none;"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">연락처</label>
+                    <input type="tel" name="phoneNumber" class="form-control" placeholder="010-0000-0000">
+                    <i class="fas fa-phone form-icon"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">주차 구역 선택</label>
+                    <input type="hidden" name="parkingSpot" id="selectedSpot" required>
+                    <div class="parking-map-container">
+                        <div class="parking-map">
+                            <!-- A열 -->
+                            <div class="spot" onclick="selectSpot(this, 'A-1')">
+                                <div><i class="fas fa-parking"></i>A-1</div>
+                            </div>
+                            <div class="spot occupied" title="주차중">
+                                <div><i class="fas fa-car-side"></i>A-2</div>
+                            </div>
+                            <div class="spot" onclick="selectSpot(this, 'A-3')">
+                                <div><i class="fas fa-parking"></i>A-3</div>
+                            </div>
+                            <div class="spot" onclick="selectSpot(this, 'A-4')">
+                                <div><i class="fas fa-parking"></i>A-4</div>
+                            </div>
+                            <div class="spot occupied" title="주차중">
+                                <div><i class="fas fa-car-side"></i>A-5</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right; margin-top: 10px; font-size: 0.85rem; color: #94a3b8;">
+                            <span style="color: #10b981; margin-right: 10px;"><i class="fas fa-square"></i> 주차 가능</span>
+                            <span style="color: #ef4444;"><i class="fas fa-square"></i> 사용 중</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">비고 / 메모</label>
+                    <textarea name="memo" class="form-control" rows="3" placeholder="특이사항이 있다면 입력해주세요"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle" style="margin-right: 8px;"></i>입차 등록 완료
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function selectSpot(el, spotId) {
+            if (el.classList.contains('occupied')) return;
+
+            document.querySelectorAll('.spot').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('selectedSpot').value = spotId;
+        }
+
+        document.getElementById('entryForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // 데모용 알림
+            const carNum = this.carNumber.value;
+            const spot = this.parkingSpot.value;
+
+            if (!spot) {
+                alert('주차할 구역을 선택해주세요!');
+                return;
+            }
+
+            if (confirm(`[${carNum}] 차량을 [${spot}] 구역에 입차하시겠습니까?`)) {
+                alert('입차가 정상적으로 등록되었습니다!');
+                window.location.href = '/parking/main';
+            }
+        });
+    </script>
+</body>
+
+</html>

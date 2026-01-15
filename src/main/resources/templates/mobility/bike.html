@@ -5,42 +5,200 @@
 <body>
 <div layout:fragment="content">
     <style>
-        .bike-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        .content-wrapper { display: flex; gap: 20px; }
-        .left-panel { width: 360px; border-right: 1px solid #eee; padding-right: 20px; }
-        .filter-section { border: 1px solid #eee; border-radius: 12px; padding: 16px; }
-        .filter-option { display:flex; align-items:center; gap:8px; padding:8px; cursor:pointer; border-radius:8px; }
-        .filter-option.active { background:#f8f9fa; }
-        .search-card { margin-top:16px; border:1px solid #eee; border-radius:12px; padding:16px; }
-        .search-button { background:#0066ff; color:#fff; padding:10px 14px; border:none; border-radius:8px; cursor:pointer; }
-        .right-panel { flex:1; }
-        #map { width: 100%; height: 500px; border-radius: 12px; border: 2px solid #e9ecef; }
-        .custom-infowindow { padding: 15px; min-width: 200px; }
-        .info-status { display:inline-block; padding:4px 10px; background:#28a745; color:#fff; border-radius:12px; font-size:.8rem; font-weight:600; }
-        .info-status.low { background:#ffc107; } .info-status.none { background:#dc3545; }
+        /* ktx.html과 동일한 간격 적용 */
+        .layout-content {
+            padding: 80px 0 40px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bike-container {
+            width: 1150px;
+            max-width: 100%;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .ktx-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            color: #333;
+        }
+
+        .ktx-subtitle {
+            margin: 0 0 24px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .left-panel {
+            width: 320px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .filter-section, .search-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .section-header {
+            font-weight: 700;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            margin-bottom: 8px;
+        }
+
+        .filter-option:hover {
+            background: #f9f9f9;
+        }
+
+        .filter-option.active {
+            background: #f0f7ff;
+            border-color: #cce5ff;
+            color: #0066ff;
+            font-weight: 600;
+        }
+
+        .right-panel {
+            flex: 1;
+        }
+
+        #map {
+            width: 100%;
+            height: 750px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-button {
+            width: 100%;
+            background: #333;
+            color: #fff;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .search-button:hover {
+            background: #000;
+        }
+
+        .custom-infowindow {
+            padding: 15px;
+            min-width: 200px;
+        }
+        
+        .info-status {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #28a745;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .info-status.low { background: #ffc107; color: #333; }
+        .info-status.none { background: #dc3545; }
+
+        @media (max-width: 1024px) {
+            .bike-container { width: auto; max-width: 100%; padding: 30px; }
+            .content-wrapper { flex-direction: column; }
+            .left-panel { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+            #map { height: 600px; }
+        }
+
+        @media (max-width: 768px) {
+            .bike-container { padding: 20px 16px; }
+            
+            .content-wrapper { 
+                flex-direction: column-reverse; /* 모바일에서는 지도가 먼저 나오도록 순서 반전 */
+                gap: 16px;
+            }
+            
+            .left-panel { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 12px;
+            }
+            
+            #map { 
+                height: 50vh; 
+                min-height: 400px; 
+            }
+
+            .filter-section, .search-card {
+                padding: 16px;
+            }
+
+            .ktx-title { font-size: 1.35rem; margin-bottom: 8px; }
+            .ktx-subtitle { font-size: 0.9rem; margin-bottom: 16px; }
+            
+            .section-header { margin-bottom: 12px; font-size: 0.95rem; }
+            .filter-option { padding: 10px; font-size: 0.9rem; }
+        }
     </style>
 
     <div class="bike-container">
-        <h1>🚴 공유 모빌리티</h1>
-        <p>따릉이와 킥보드를 지도에서 확인하고 가까운 위치를 찾아보세요</p>
+        <h1 class="ktx-title">🚴 공유 모빌리티</h1>
+        <p class="ktx-subtitle">따릉이와 공유 킥보드를 지도에서 확인하고 가까운 위치를 찾아보세요</p>
 
         <div class="content-wrapper">
             <div class="left-panel">
                 <div class="filter-section">
-                    <div style="font-weight:700; margin-bottom:8px;">🔍 모빌리티 타입 선택</div>
+                    <div class="section-header">🔍 모빌리티 타입</div>
                     <div class="filter-option active" onclick="toggleFilter('bike', this)">
                         <input type="checkbox" id="filter-bike" checked>
-                        <label for="filter-bike">🚴 따릉이 (공공자전거)</label>
+                        <label for="filter-bike" style="cursor:pointer">🚴 따릉이</label>
                     </div>
                     <div class="filter-option active" onclick="toggleFilter('kickboard', this)">
                         <input type="checkbox" id="filter-kickboard" checked>
-                        <label for="filter-kickboard">🛴 킥보드 (전동스쿠터)</label>
+                        <label for="filter-kickboard" style="cursor:pointer">🛴 공유 킥보드</label>
                     </div>
                 </div>
 
                 <div class="search-card">
-                    <div class="search-title">내 위치 기반 검색</div>
-                    <button class="search-button" onclick="searchNearby()">📍 내 위치에서 찾기</button>
+                    <div class="section-header">📍 내 위치 검색</div>
+                    <p style="margin:0 0 16px 0; color:#666; font-size:0.9rem;">현재 위치를 기반으로 주변 기기를 찾습니다.</p>
+                    <button class="search-button" onclick="searchNearby()">내 위치에서 찾기</button>
                 </div>
             </div>
 

@@ -6,7 +6,8 @@
 <body>
 <div layout:fragment="content">
     <style>
-        .noticeList table { width: 100%; border-collapse: collapse; background: white; }
+        .notice-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .noticeList table { width: 100%; border-collapse: collapse; background: white; table-layout: fixed; }
         .noticeList th, .noticeList td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
         .noticeList thead th { background: #f7f7f7; font-weight: 700; }
         .noticeList .cate { width: 120px; color: #6a1b9a; font-weight: 700; }
@@ -17,7 +18,6 @@
         .notice-tools { display: flex; gap: 10px; margin: 14px 0 18px; }
         .notice-tools input, .notice-tools select { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; }
         
-        /* Modern Pagination CSS */
         .pagination { 
             margin-top: 30px; 
             display: flex; 
@@ -63,76 +63,144 @@
         .notice-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .btn-write { padding: 8px 14px; background: #333; color: #fff; border-radius: 6px; text-decoration: none; }
         .btn-write:hover { background: #000; }
+
+        @media (max-width: 768px) {
+            .notice-container { padding: 0 16px; }
+            .notice-header h1 { font-size: 1.5rem; }
+
+            .notice-tools { flex-direction: column; gap: 10px; }
+            .notice-tools form { display: flex; gap: 8px; width: 100%; }
+            .notice-tools select { width: 100px; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; }
+            .notice-tools input { flex: 1; width: auto; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; }
+            .btn-write { width: 100%; text-align: center; box-sizing: border-box; }
+
+            .noticeList table { display: block; border: 0; }
+            .noticeList thead { display: none; }
+            .noticeList tbody { display: block; }
+
+            .noticeList tr {
+                display: block;
+                padding: 16px;
+                border-bottom: 1px solid #eee;
+                background: #fff;
+                position: relative;
+            }
+
+            .noticeList td {
+                display: block;
+                padding: 0;
+                border: none;
+                text-align: left;
+                width: auto;
+                box-sizing: border-box;
+            }
+
+            .noticeList .cate {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #6a1b9a;
+                margin-bottom: 4px;
+            }
+
+            .noticeList .tit {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 8px;
+                display: block;
+                line-height: 1.4;
+            }
+
+            .noticeList .date,
+            .noticeList .count {
+                display: inline-block;
+                font-size: 0.85rem;
+                color: #888;
+                width: auto;
+                margin-right: 10px;
+            }
+
+            .noticeList .date::after {
+                content: "|";
+                margin-left: 10px;
+                color: #ddd;
+            }
+
+            .noticeList .count { text-align: left; }
+
+            .pagination { margin-top: 20px; }
+        }
     </style>
 
-    <div class="notice-header">
-        <h1 style="margin: 0;">공지사항</h1>
-    </div>
+    <div class="notice-container">
+        <div class="notice-header">
+            <h1 style="margin: 0;">공지사항</h1>
+        </div>
 
-    <div class="notice-tools">
-        <form th:action="@{/notice/list}" method="get" style="display:flex; gap:10px;">
-            <select name="tag">
-                <option value="" th:selected="${tag == null or tag == ''}">전체</option>
-                <option value="공지" th:selected="${tag == '공지'}">공지</option>
-                <option value="이벤트" th:selected="${tag == '이벤트'}">이벤트</option>
-            </select>
-            <input type="text" name="q" placeholder="검색어를 입력하세요." th:value="${q}">
-            <button type="submit" class="btn-write" style="padding:8px 14px;">검색</button>
-        </form>
-        <a sec:authorize="hasRole('ADMIN')" href="/notice/admin/create" class="btn-write">공지 작성</a>
-    </div>
+        <div class="notice-tools">
+            <form th:action="@{/notice/list}" method="get" style="display:flex; gap:10px;">
+                <select name="tag">
+                    <option value="" th:selected="${tag == null or tag == ''}">전체</option>
+                    <option value="공지" th:selected="${tag == '공지'}">공지</option>
+                    <option value="이벤트" th:selected="${tag == '이벤트'}">이벤트</option>
+                </select>
+                <input type="text" name="q" placeholder="검색어를 입력하세요." th:value="${q}">
+                <button type="submit" class="btn-write" style="padding:8px 14px;">검색</button>
+            </form>
+            <a sec:authorize="hasRole('ADMIN')" href="/notice/admin/create" class="btn-write">공지 작성</a>
+        </div>
 
-    <div class="noticeList">
-        <table>
-            <colgroup>
-                <col class="cate">
-                <col class="tit">
-                <col class="date">
-                <col class="count">
-            </colgroup>
-            <thead>
-            <tr>
-                <th class="cate">카테고리</th>
-                <th class="tit">제목</th>
-                <th class="date">등록일</th>
-                <th class="count">조회수</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="n : ${notices.getContent()}">
-                <td class="cate" th:text="${n.tag}">[공지]</td>
-                <td class="tit">
-                    <a th:href="@{/notice/view/{id}(id=${n.id})}">
-                        <span th:if="${n.pinned}" style="color:#e53935; font-weight:700;">[상단]</span>
-                        <span th:text="${n.title}">제목</span>
-                    </a>
-                </td>
-                <td class="date" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}">2026-01-01</td>
-                <td class="count" th:text="${n.views}">0</td>
-            </tr>
-            <tr th:if="${notices.totalElements == 0}">
-                <td colspan="4" style="text-align:center; color:#777;">등록된 공지사항이 없습니다.</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="noticeList">
+            <table>
+                <colgroup>
+                    <col class="cate">
+                    <col class="tit">
+                    <col class="date">
+                    <col class="count">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="cate">카테고리</th>
+                    <th class="tit">제목</th>
+                    <th class="date">등록일</th>
+                    <th class="count">조회수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="n : ${notices.getContent()}">
+                    <td class="cate" th:text="${n.tag}">[공지]</td>
+                    <td class="tit">
+                        <a th:href="@{/notice/view/{id}(id=${n.id})}">
+                            <span th:if="${n.pinned}" style="color:#e53935; font-weight:700;">[상단]</span>
+                            <span th:text="${#strings.length(n.title) > 5 ? #strings.substring(n.title, 0, 5) + '...' : n.title}">제목</span>
+                        </a>
+                    </td>
+                    <td class="date" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}">2026-01-01</td>
+                    <td class="count" th:text="${n.views}">0</td>
+                </tr>
+                <tr th:if="${notices.totalElements == 0}">
+                    <td colspan="4" style="text-align:center; color:#777;">등록된 공지사항이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="pagination" th:if="${notices.totalPages > 0}">
-        <a th:href="@{/notice/list(page=0, q=${q}, tag=${tag})}" title="처음"><span class="material-symbols-outlined" style="font-size:16px;">first_page</span></a>
-        <a th:if="${notices.number > 0}" th:href="@{/notice/list(page=${notices.number - 1}, q=${q}, tag=${tag})}" title="이전"><span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span></a>
-        
-        <span class="paginationNum">
-            <!-- Show max 5 page numbers -->
-            <th:block th:with="start=${(notices.number/5)*5}, end=${((notices.number/5)*5)+4 < notices.totalPages-1 ? ((notices.number/5)*5)+4 : notices.totalPages-1}">
-                <th:block th:each="i : ${#numbers.sequence(start, end)}">
-                    <strong th:if="${i == notices.number}" th:text="${i + 1}">1</strong>
-                    <a th:unless="${i == notices.number}" th:href="@{/notice/list(page=${i}, q=${q}, tag=${tag})}" th:text="${i + 1}">2</a>
+        <div class="pagination" th:if="${notices.totalPages > 0}">
+            <a th:href="@{/notice/list(page=0, q=${q}, tag=${tag})}" title="처음"><span class="material-symbols-outlined" style="font-size:16px;">first_page</span></a>
+            <a th:if="${notices.number > 0}" th:href="@{/notice/list(page=${notices.number - 1}, q=${q}, tag=${tag})}" title="이전"><span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span></a>
+            
+            <span class="paginationNum">
+                <!-- Show max 5 page numbers -->
+                <th:block th:with="start=${(notices.number/5)*5}, end=${((notices.number/5)*5)+4 < notices.totalPages-1 ? ((notices.number/5)*5)+4 : notices.totalPages-1}">
+                    <th:block th:each="i : ${#numbers.sequence(start, end)}">
+                        <strong th:if="${i == notices.number}" th:text="${i + 1}">1</strong>
+                        <a th:unless="${i == notices.number}" th:href="@{/notice/list(page=${i}, q=${q}, tag=${tag})}" th:text="${i + 1}">2</a>
+                    </th:block>
                 </th:block>
-            </th:block>
-        </span>
+            </span>
 
-        <a th:if="${notices.number + 1 < notices.totalPages}" th:href="@{/notice/list(page=${notices.number + 1}, q=${q}, tag=${tag})}" title="다음"><span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span></a>
-        <a th:href="@{/notice/list(page=${notices.totalPages - 1}, q=${q}, tag=${tag})}" title="끝"><span class="material-symbols-outlined" style="font-size:16px;">last_page</span></a>
+            <a th:if="${notices.number + 1 < notices.totalPages}" th:href="@{/notice/list(page=${notices.number + 1}, q=${q}, tag=${tag})}" title="다음"><span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span></a>
+            <a th:href="@{/notice/list(page=${notices.totalPages - 1}, q=${q}, tag=${tag})}" title="끝"><span class="material-symbols-outlined" style="font-size:16px;">last_page</span></a>
+        </div>
     </div>
 </div>
 </body>

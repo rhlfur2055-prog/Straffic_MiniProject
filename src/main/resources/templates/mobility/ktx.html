@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<body>
+<div layout:fragment="content">
+    <style>
+        .layout-content {
+            padding: 80px 0 40px;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .layout-content { padding-top: 70px; }
+        }
+
+        .ktx-page {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            transition: max-width 0.3s ease;
+        }
+
+        .ktx-container {
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin: 0 auto;
+        }
+
+        .ktx-container h1 {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            margin-top: 0;
+            font-weight: 700;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-label { font-size: 14px; font-weight: 600; color: #444; }
+
+        .station-select, .form-input, .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #333; color: #fff; }
+        .btn-primary:hover { background: #000; }
+
+        .train-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .ktx-page { max-width: 1000px; }
+        }
+
+        @media (max-width: 768px) {
+            .ktx-page { width: 412px; max-width: 100%; }
+            .ktx-container { padding: 24px 16px; border-radius: 0; box-shadow: none; border-left: none; border-right: none; }
+            .search-row {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+            .train-card {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+            .price { margin-bottom: 10px; }
+            .btn { width: 100%; }
+        }
+
+        .seat-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .seat-modal-backdrop.active {
+            display: flex;
+        }
+
+        .seat-modal {
+            background: #fff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 12px;
+            padding: 20px 20px 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            box-sizing: border-box;
+        }
+
+        .seat-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .seat-modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .seat-modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .seat-info {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 16px 0 12px;
+        }
+
+        .seat-item {
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .seat-item.selected {
+            background: #333;
+            color: #fff;
+            border-color: #333;
+        }
+
+        .seat-item.disabled {
+            background: #f3f3f3;
+            color: #aaa;
+            border-style: dashed;
+            cursor: default;
+        }
+
+        .seat-selected-info {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .seat-modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .seat-modal-actions .btn {
+            flex: 1;
+        }
+
+        @media (max-width: 480px) {
+            .seat-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+
+    <div class="ktx-page">
+        <div class="ktx-container">
+            <h1>🚄 KTX 예매</h1>
+            <p>출발역과 도착역을 선택하여 열차를 검색하세요</p>
+
+            <div id="reservationSummary" style="display:none; margin: 10px 0 20px; padding: 10px 14px; border-radius: 8px; background:#f5f7ff; border:1px solid #d0d7ff; font-size: 0.9rem;"></div>
+
+            <div class="search-row">
+                <div class="form-group">
+                    <label class="form-label">출발역</label>
+                    <select class="station-select" id="departure">
+                        <option>서울</option><option>용산</option><option>광명</option><option>수원</option>
+                        <option>천안아산</option><option>대전</option><option>동대구</option><option>부산</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">도착역</label>
+                    <select class="station-select" id="arrival">
+                        <option>부산</option><option>동대구</option><option>대전</option><option>천안아산</option>
+                        <option>수원</option><option>광명</option><option>서울</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">출발일</label>
+                    <input type="date" class="form-input" id="departureDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">인원</label>
+                    <select class="form-select" id="passengers">
+                        <option value="1">1명</option><option value="2">2명</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:12px" onclick="searchTrains()">🔍 열차 검색</button>
+
+            <div id="trainList"></div>
+        </div>
+    </div>
+
+    <div id="seatModalBackdrop" class="seat-modal-backdrop">
+        <div class="seat-modal">
+            <div class="seat-modal-header">
+                <div class="seat-modal-title">좌석 선택</div>
+                <button type="button" class="seat-modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="trainInfo"></div>
+            <div class="seat-info">원하는 좌석을 선택하세요 (최대 20석 표시)</div>
+            <div id="seatGrid" class="seat-grid"></div>
+            <div class="seat-selected-info">
+                선택된 좌석: <span id="selectedSeats">없음</span>
+            </div>
+            <div class="seat-modal-actions">
+                <button type="button" class="btn" onclick="closeModal()">취소</button>
+                <button type="button" class="btn btn-primary" onclick="confirmReservation()">예약하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedSeats = [];
+        let currentTrain = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('departureDate').value = today;
+            searchTrains();
+        });
+
+        function searchTrains() {
+            const departure = document.getElementById('departure').value;
+            const arrival = document.getElementById('arrival').value;
+            const date = document.getElementById('departureDate').value;
+            const passengers = document.getElementById('passengers').value;
+
+            fetch(`/ktx/search?departure=${encodeURIComponent(departure)}&arrival=${encodeURIComponent(arrival)}&date=${date}&passengers=${passengers}`)
+                .then(r => r.json())
+                .then(data => {
+                    const list = document.getElementById('trainList');
+                    if (!data.success || !data.trains || data.trains.length === 0) {
+                        list.innerHTML = '<div style="padding:40px; text-align:center; color:#777;">운행 중인 열차가 없습니다</div>';
+                        return;
+                    }
+                    list.innerHTML = data.trains.map(t => `
+                        <div class="train-card">
+                            <div>
+                                <div><strong>${t.trainNo}</strong></div>
+                                <div class="train-route">${t.departure} ${t.departureTime} → ${t.arrival} ${t.arrivalTime} · ${t.duration}</div>
+                                <div style="font-size:0.8rem; color:#666; margin-top:4px;">잔여 좌석: ${t.availableSeats} / 20</div>
+                            </div>
+                            <div>
+                                <div class="price">${t.price}원</div>
+                                <button class="btn btn-primary" onclick='openSeatModal(${JSON.stringify(t)}, "${date}")'>예매하기</button>
+                            </div>
+                        </div>
+                    `).join('');
+                });
+        }
+
+        function openSeatModal(train, date) {
+            currentTrain = Object.assign({}, train, {date});
+            selectedSeats = [];
+            document.getElementById('trainInfo').innerHTML =
+                `<div style="display:flex; justify-content:space-between;">
+                    <div><strong>${train.trainNo}</strong><div style="color:#777">${train.departure} ${train.departureTime} → ${train.arrival} ${train.arrivalTime}</div></div>
+                    <div class="price">${train.price}원</div>
+                 </div>`;
+            fetch(`/ktx/api/seats?trainNo=${encodeURIComponent(train.trainNo)}&date=${encodeURIComponent(date)}`)
+                .then(r => r.json())
+                .then(data => {
+                    const grid = document.getElementById('seatGrid');
+                    grid.innerHTML = '';
+                    const occupied = data.occupiedSeats || [];
+                    for (let i=1; i<=20; i++) {
+                        const d = document.createElement('div');
+                        d.className = 'seat-item';
+                        d.textContent = i;
+                        if (occupied.includes(i)) {
+                            d.classList.add('disabled');
+                        } else {
+                            d.onclick = () => toggleSeat(i, d);
+                        }
+                        grid.appendChild(d);
+                    }
+                    document.getElementById('seatModalBackdrop').classList.add('active');
+                    updateSelectedInfo();
+                });
+        }
+
+        function closeModal() {
+            document.getElementById('seatModalBackdrop').classList.remove('active');
+            selectedSeats = [];
+        }
+        function toggleSeat(num, el) {
+            const passengerCount = parseInt(document.getElementById('passengers').value || '1', 10);
+            const maxSelectable = Math.min(passengerCount, 2);
+
+            if (selectedSeats.includes(num)) {
+                selectedSeats = selectedSeats.filter(s => s !== num);
+                el.classList.remove('selected');
+            } else {
+                if (selectedSeats.length >= maxSelectable) {
+                    alert(`최대 ${maxSelectable}개의 좌석만 선택할 수 있습니다.`);
+                    return;
+                }
+                selectedSeats.push(num);
+                el.classList.add('selected');
+            }
+            updateSelectedInfo();
+        }
+        function updateSelectedInfo() {
+            document.getElementById('selectedSeats').textContent = selectedSeats.length ? selectedSeats.sort((a,b)=>a-b).join(', ') + '번' : '없음';
+        }
+        function confirmReservation() {
+            if (!selectedSeats.length) return alert('좌석을 선택해주세요');
+            const seats = selectedSeats.sort((a,b)=>a-b).join(', ');
+            const passengers = document.getElementById('passengers').value;
+            fetch('/ktx/api/reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    trainNo: currentTrain.trainNo,
+                    from: currentTrain.departure,
+                    to: currentTrain.arrival,
+                    depTime: currentTrain.departureTime,
+                    arrTime: currentTrain.arrivalTime,
+                    seats: seats,
+                    price: String(currentTrain.price).replace(/,/g,''),
+                    date: document.getElementById('departureDate').value,
+                    passengers: passengers
+                })
+            }).then(r=>r.json()).then(data=>{
+                if (data.success) {
+                    const summary = document.getElementById('reservationSummary');
+                    summary.style.display = 'block';
+                    summary.innerHTML =
+                        `<div style="display:flex; justify-content:space-between; align-items:center;">` +
+                        `<div>` +
+                        `예약번호: <strong>${data.reservationId}</strong><br>` +
+                        `${data.date} ${data.from} → ${data.to} (${data.trainNo})<br>` +
+                        `좌석: ${data.seats.join(', ')}번 / 금액: ${data.price.toLocaleString()}원` +
+                        `</div>` +
+                        `<div><button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem; background-color: #d9534f;" onclick="cancelReservation(${data.id})">예약취소</button></div>` +
+                        `</div>`;
+                    alert(`예약이 완료되었습니다 (예약번호: ${data.reservationId})`);
+                } else {
+                    alert(data.message || '예약에 실패했습니다');
+                }
+                closeModal();
+                searchTrains();
+            });
+        }
+
+        function cancelReservation(id) {
+            if (!confirm('정말로 예약을 취소하시겠습니까?')) return;
+
+            fetch('/ktx/api/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ id: id })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    alert('예약이 취소되었습니다.');
+                    document.getElementById('reservationSummary').style.display = 'none';
+                    document.getElementById('reservationSummary').innerHTML = '';
+                    searchTrains();
+                } else {
+                    alert(data.message || '예약 취소에 실패했습니다.');
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

@@ -17,6 +17,64 @@
         .btList, .btEdit, .btDelete { padding: 8px 16px; border-radius: 6px; text-decoration: none; border: 1px solid #ddd; background: #fff; color: #333; }
         .btList:hover, .btEdit:hover, .btDelete:hover { background: #f5f5f5; }
         .btDelete { color: #e53935; border-color: #ffcdd2; }
+
+        @media (max-width: 768px) {
+            .noticeView { 
+                padding: 24px 16px; 
+                border-radius: 0; 
+                border-left: none; 
+                border-right: none; 
+            }
+            .noticeView h3 { font-size: 1.6rem; margin-bottom: 18px; }
+
+            .noticeInfo { 
+                flex-wrap: wrap; 
+                gap: 8px 16px; 
+                margin-bottom: 18px; 
+                font-size: 0.85rem; 
+            }
+
+            .noticeCnts { 
+                padding-top: 14px; 
+                min-height: 180px; 
+                font-size: 0.95rem; 
+                line-height: 1.6; 
+            }
+
+            .notice-images { 
+                justify-content: center; 
+                gap: 12px; 
+            }
+            .notice-images img { 
+                max-width: 100%; 
+            }
+
+            .noticeBt { 
+                margin-top: 30px; 
+                flex-direction: column; 
+                gap: 10px; 
+            }
+            .noticeBt > a.btList {
+                width: 100%;
+                text-align: center;
+            }
+            .noticeBt > div { 
+                display: flex; 
+                gap: 10px; 
+                width: 100%; 
+            }
+            .noticeBt > div > .btEdit {
+                flex: 1;
+            }
+            .noticeBt > div > form {
+                flex: 1;
+                display: block !important;
+            }
+            .btEdit, .btDelete { 
+                width: 100%; 
+                text-align: center; 
+            }
+        }
     </style>
 
     <div class="noticeView">

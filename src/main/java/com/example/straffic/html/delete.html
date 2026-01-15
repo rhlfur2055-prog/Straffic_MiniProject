@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>기록 관리 | 주차 관리 시스템</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .toolbar {
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .select-info {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.8);
+            color: #94a3b8;
+            font-weight: 600;
+            padding: 18px;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 20px 18px;
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+
+        tr {
+            transition: background 0.2s;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #ef4444;
+            cursor: pointer;
+        }
+
+        .car-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .car-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e1;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-in {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-out {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-bulk-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-bulk-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🗑️ 데이터 관리 및 삭제</h1>
+            <p style="color: #94a3b8;">오래된 기록을 정리하거나 잘못된 데이터를 삭제합니다</p>
+        </div>
+
+        <div class="glass-panel">
+            <div class="toolbar">
+                <div class="select-info">
+                    <i class="fas fa-check-square"></i> <span id="selectedCount">0</span>개 선택됨
+                </div>
+                <button class="btn-bulk-delete" onclick="deleteSelected()">
+                    <i class="fas fa-trash"></i> 선택 삭제
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th width="50"><input type="checkbox" onchange="toggleAll(this)"></th>
+                        <th>차량 정보</th>
+                        <th>입차/출차 시간</th>
+                        <th>상태</th>
+                        <th>결제 금액</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" class="row-check" onchange="updateCount()"></td>
+                        <td>
+                            <div class="car-info">
+                                <div class="car-icon"><i class="fas fa-car"></i></div>
+                                <div>
+                                    <div style="font-weight: 700;">12가 3456</div>
+                                    <div style="font-size: 0.8rem; color: #94a3b8;">일반 · A-1</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;">2024.03.20 10:00</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">(3시간 20분 전)</div>
+                        </td>
+                        <td><span class="status-badge status-in"><i class="fas fa-clock"></i> 주차중</span></td>
+                        <td>-</td>
+                        <td><button class="btn-delete" onclick="deleteOne(this)"><i class="fas fa-times"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="row-check" onchange="updateCount()"></td>
+                        <td>
+                            <div class="car-info">
+                                <div class="car-icon"><i class="fas fa-bolt"></i></div>
+                                <div>
+                                    <div style="font-weight: 700;">88하 9999</div>
+                                    <div style="font-size: 0.8rem; color: #94a3b8;">전기차 · C-1</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;">2024.03.19 15:30</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">(출차: 18:00)</div>
+                        </td>
+                        <td><span class="status-badge status-out"><i class="fas fa-check"></i> 출차완료</span></td>
+                        <td style="color: #10b981; font-weight: 700;">5,000원</td>
+                        <td><button class="btn-delete" onclick="deleteOne(this)"><i class="fas fa-times"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function updateCount() {
+            const count = document.querySelectorAll('.row-check:checked').length;
+            document.getElementById('selectedCount').innerText = count;
+        }
+
+        function toggleAll(source) {
+            checkboxes = document.querySelectorAll('.row-check');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateCount();
+        }
+
+        function deleteOne(btn) {
+            if (confirm('이 기록을 정말 삭제하시겠습니까?')) {
+                const row = btn.closest('tr');
+                row.style.opacity = '0';
+                setTimeout(() => row.remove(), 300);
+            }
+        }
+
+        function deleteSelected() {
+            const count = document.querySelectorAll('.row-check:checked').length;
+            if (count === 0) {
+                alert('삭제할 항목을 선택해주세요.');
+                return;
+            }
+            if (confirm(`${count}개의 선택된 항목을 삭제하시겠습니까?`)) {
+                alert('삭제되었습니다.');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>

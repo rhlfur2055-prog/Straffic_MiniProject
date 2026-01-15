@@ -564,19 +564,16 @@
                     <div class="quick-icon"><span class="material-symbols-outlined">local_parking</span></div>
                     <div class="quick-text">주차장 요금</div>
                 </a>
-                <a href="#" class="quick-item">
-                    <div class="quick-icon"><span class="material-symbols-outlined">toll</span></div>
-                    <div class="quick-text">고속도로 요금</div>
-                </a>
-                <a href="#" class="quick-item">
+
+                <a href="/ktx" class="quick-item">
                     <div class="quick-icon"><span class="material-symbols-outlined">train</span></div>
                     <div class="quick-text">KTX 예약</div>
                 </a>
-                <a href="#" class="quick-item">
+                <a href="/bike" class="quick-item">
                     <div class="quick-icon"><span class="material-symbols-outlined">pedal_bike</span></div>
                     <div class="quick-text">자전거 예약</div>
                 </a>
-                <a href="#" class="quick-item">
+                <a href="/subway" class="quick-item">
                     <div class="quick-icon"><span class="material-symbols-outlined">subway</span></div>
                     <div class="quick-text">지하철 정보</div>
                 </a>
@@ -599,7 +596,7 @@
                 <!-- Recent Notices -->
                 <a th:each="n : ${recentNotices}" th:href="@{/notice/view/{id}(id=${n.id})}" class="news-item">
                     <span class="news-badge" th:text="${n.tag}">[공지]</span>
-                    <span class="news-title" th:text="${n.title}">공지사항 제목입니다.</span>
+                    <span class="news-title" th:text="${#strings.length(n.title) > 5 ? #strings.substring(n.title, 0, 5) + '...' : n.title}">공지사항 제목입니다.</span>
                     <span class="news-date" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}">2026-01-01</span>
                 </a>
                 

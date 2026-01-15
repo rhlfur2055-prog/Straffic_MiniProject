@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>상세 조회 | 주차 관리 시스템</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 900px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+        }
+
+        .ticket-wrapper {
+            background: white;
+            color: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .ticket-left {
+            flex: 2;
+            padding: 40px;
+            position: relative;
+            border-right: 2px dashed #cbd5e1;
+        }
+
+        .ticket-left::before,
+        .ticket-left::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #0f172a;
+            /* Backgrond color matching page */
+            border-radius: 50%;
+            right: -15px;
+        }
+
+        .ticket-left::before {
+            top: -15px;
+        }
+
+        .ticket-left::after {
+            bottom: -15px;
+        }
+
+        .ticket-right {
+            flex: 1;
+            background: #f8fafc;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .ticket-title {
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .car-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 30px;
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .info-item span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .price-tag {
+            background: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .qr-area img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+            mix-blend-mode: multiply;
+        }
+
+        .timeline {
+            margin-top: 50px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: #334155;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -35px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #0f172a;
+        }
+
+        .dot-in {
+            background: #3b82f6;
+            box-shadow: 0 0 10px #3b82f6;
+        }
+
+        .dot-out {
+            background: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b;
+        }
+
+        .timeline-content {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-time {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎫 이용 상세 내역</h1>
+            <p style="color: #94a3b8;">차량 이용 내역 및 영수증 상세</p>
+        </div>
+
+        <div class="ticket-wrapper">
+            <div class="ticket-left">
+                <div class="ticket-title">Parking Ticket Invoice</div>
+                <div class="car-number">12가 3456</div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Date</label>
+                        <span>2024.03.20</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Zone</label>
+                        <span style="color: #3b82f6;">A-1 (VIP)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>In Time</label>
+                        <span>10:00:00</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Out Time</label>
+                        <span>13:20:00</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Duration</label>
+                        <span>3h 20m</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Car Type</label>
+                        <span>General / Sedan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-right">
+                <div class="qr-area">
+                    <!-- Placeholder QR -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ParkingTicket123456"
+                        alt="QR Code">
+                </div>
+                <div class="info-item">
+                    <label>Total Amount</label>
+                    <div class="price-tag">₩ 7,000</div>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.8rem; color: #64748b;">Receipt ID: #PK-20240320-001</p>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot dot-out"></div>
+                <div class="timeline-content">
+                    <span class="timeline-time">Today 13:20</span>
+                    <strong style="color: #f59e0b;">출차 정산 완료</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.9rem;">카드 결제 승인 (7,000원)</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot dot-in"></div>
+                <div class="timeline-content">
+                    <span class="timeline-time">Today 10:00</span>
+                    <strong style="color: #3b82f6;">입차 완료</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.9rem;">A-1 구역 배정, 차량번호 인식 성공</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; display: flex; justify-content: center; gap: 15px;">
+            <a href="/parking/main" class="btn"
+                style="background: rgba(255,255,255,0.1); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none;">목록으로</a>
+            <button class="btn"
+                style="background: #3b82f6; color: white; padding: 12px 30px; border-radius: 10px; border: none; cursor: pointer;">
+                <i class="fas fa-print"></i> 영수증 출력
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>
