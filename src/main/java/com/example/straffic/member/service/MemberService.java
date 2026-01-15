@@ -20,4 +20,10 @@ public interface MemberService {
     Page<MemberEntity> entitypage(int page);
 
     long count();
+
+    void deleteSelf(String memberId, String rawPassword);
+
+    void changePassword(String memberId, String currentPassword, String newPassword);
+
+    void changeTel(String memberId, String newTel);
 }

@@ -53,7 +53,8 @@ public class SecurityConfiguration {
                                 "/login/oauth2/code/**",
                                 "/oauth2/**",
                                 "/error",
-                                "/image/**", "/css/**", "/js/**"
+                                        "/image/**", "/css/**", "/js/**",
+                                        "/mypage", "/mypage/**"
                         ).permitAll()
                         .requestMatchers("/notice/list", "/notice/view/**", "/notice/image/**").permitAll()
                         .requestMatchers("/board/list", "/board/view/**", "/board/image/**").permitAll()
@@ -73,7 +74,7 @@ public class SecurityConfiguration {
                                                                 HttpServletResponse response,
                                                                 AuthenticationException exception)
                                     throws IOException, ServletException {
-                                response.sendRedirect("/login");
+                                response.sendRedirect("/login?error=true");
                             }
                         })
                         .permitAll()

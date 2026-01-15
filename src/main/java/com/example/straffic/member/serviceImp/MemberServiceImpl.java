@@ -54,4 +54,39 @@ public class MemberServiceImpl implements MemberService {
     public long count() {
         return memberRepository.count();
     }
+
+    @Override
+    public void deleteSelf(String memberId, String rawPassword) {
+        MemberEntity member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new IllegalStateException("회원 정보를 찾을 수 없습니다.");
+        }
+        if (!bCryptPasswordEncoder.matches(rawPassword, member.getPw())) {
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        }
+        memberRepository.delete(member);
+    }
+
+    @Override
+    public void changePassword(String memberId, String currentPassword, String newPassword) {
+        MemberEntity member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new IllegalStateException("회원 정보를 찾을 수 없습니다.");
+        }
+        if (!bCryptPasswordEncoder.matches(currentPassword, member.getPw())) {
+            throw new IllegalStateException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        member.setPw(bCryptPasswordEncoder.encode(newPassword));
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void changeTel(String memberId, String newTel) {
+        MemberEntity member = memberRepository.findOneById(memberId);
+        if (member == null) {
+            throw new IllegalStateException("회원 정보를 찾을 수 없습니다.");
+        }
+        member.setTel(newTel);
+        memberRepository.save(member);
+    }
 }

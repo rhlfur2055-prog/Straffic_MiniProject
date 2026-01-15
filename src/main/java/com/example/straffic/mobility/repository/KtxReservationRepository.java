@@ -9,5 +9,6 @@ import java.util.List;
 public interface KtxReservationRepository extends JpaRepository<KtxReservationEntity, Long> {
 
     List<KtxReservationEntity> findByTrainNoAndTravelDate(String trainNo, LocalDate travelDate);
+    List<KtxReservationEntity> findByMemberIdOrderByReservedAtDesc(String memberId);
 }
 

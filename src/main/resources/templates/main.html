@@ -52,13 +52,18 @@
                 <!-- Authenticated State -->
                 <div sec:authorize="isAuthenticated()" class="user-profile">
                     <div class="user-avatar">
-                        <span class="material-symbols-outlined" style="font-size: 40px;">face</span>
+                        <img th:src="@{/member/profile-image}"
+                             alt="프로필"
+                             style="width:60px; height:60px; border-radius:50%; object-fit:cover; display:block;"
+                             onerror="this.style.display='none'">
                     </div>
                     <div class="user-name">
-                        <span th:if="${#authentication.principal instanceof T(com.example.straffic.oauth.PrincipalOauth2UserService.CustomOAuth2User)}"
-                              th:text="${#authentication.principal.realName}">User</span>
-                        <span th:unless="${#authentication.principal instanceof T(com.example.straffic.oauth.PrincipalOauth2UserService.CustomOAuth2User)}"
-                              th:text="${#authentication.name}">User</span>님
+                        <a href="/mypage" style="text-decoration:none; color:inherit;">
+                            <span th:if="${#authentication.principal instanceof T(com.example.straffic.oauth.PrincipalOauth2UserService.CustomOAuth2User)}"
+                                  th:text="${#authentication.principal.realName}">User</span>
+                            <span th:unless="${#authentication.principal instanceof T(com.example.straffic.oauth.PrincipalOauth2UserService.CustomOAuth2User)}"
+                                  th:text="${#authentication.name}">User</span>님
+                        </a>
                     </div>
                     <div class="user-role" th:classappend="${#authorization.expression('hasRole(''ADMIN'')')} ? 'role-admin'">
                         <span sec:authorize="hasRole('ADMIN')">관리자</span>
@@ -80,7 +85,7 @@
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <a href="/logout" class="nexon-btn btn-logout" style="flex: 1;">로그아웃</a>
-                        <a href="#" class="nexon-btn" style="flex: 1; background: #555;">내 정보</a>
+                        <a href="/mypage" class="nexon-btn" style="flex: 1; background: #555;">내 정보</a>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,243 @@
+.mypage {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.mypage-container {
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.mypage-title {
+    margin: 0 0 20px 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.profile-main,
+.profile-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.section-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.section-margin-top {
+    margin-top: 24px;
+}
+
+.account-info {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fafafa;
+}
+
+.info-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+}
+
+.info-label {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #222;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.text-input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+}
+
+.btn-primary-outline,
+.btn-danger-outline {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    background: #fff;
+    cursor: not-allowed;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-danger-outline {
+    border-color: #d9534f;
+    color: #d9534f;
+}
+
+.section-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.withdraw-error {
+    font-size: 0.85rem;
+    color: #d9534f;
+    margin-bottom: 8px;
+}
+
+.password-success {
+    font-size: 0.85rem;
+    color: #2f7d32;
+    margin-bottom: 8px;
+}
+
+.profile-photo-card {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.profile-photo-circle {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #f5f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+    color: #3b5bdb;
+}
+
+.empty-state {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 18px;
+    border: 1px dashed #ddd;
+    border-radius: 10px;
+    color: #666;
+}
+.empty-icon { font-size: 1.2rem; }
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.card-left {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7ff;
+    border-radius: 10px;
+    color: #3b5bdb;
+    font-size: 1.2rem;
+}
+
+.card-center {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-title {
+    font-weight: 700;
+    color: #222;
+}
+
+.card-meta {
+    color: #666;
+    font-size: 0.95rem;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.divider { color: #ddd; }
+
+.card-right {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.status {
+    font-weight: 700;
+    color: #2f7d32;
+    font-size: 0.95rem;
+}
+
+.btn-cancel {
+    background: #d9534f;
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-cancel:hover { background: #c9302c; }
+
+@media (max-width: 768px) {
+    .mypage-container { padding: 20px; border-radius: 0; box-shadow: none; border-left: none; border-right: none; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .card { grid-template-columns: auto 1fr; }
+    .card-right { grid-column: 1 / -1; align-items: flex-start; }
+}

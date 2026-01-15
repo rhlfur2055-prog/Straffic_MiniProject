@@ -3,6 +3,7 @@ package com.example.straffic.member.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,10 @@ public class MemberEntity {
     private String provider;
     @Column
     private String providerId;
+
+    @Column
+    private String profileImageContentType;
+
+    @Lob
+    private byte[] profileImageData;
 }
