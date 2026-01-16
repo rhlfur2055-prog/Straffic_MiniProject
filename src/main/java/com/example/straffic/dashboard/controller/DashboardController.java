@@ -4,6 +4,7 @@ import com.example.straffic.dashboard.dto.DailyViewsDTO;
 import com.example.straffic.dashboard.dto.KtxReservationSummaryDTO;
 import com.example.straffic.dashboard.dto.WeeklyStatsDTO;
 import com.example.straffic.dashboard.dto.YearlyStatsDTO;
+import com.example.straffic.dashboard.service.PageViewStatsService;
 import com.example.straffic.mobility.entity.KtxReservationEntity;
 import com.example.straffic.mobility.repository.KtxReservationRepository;
 import com.example.straffic.board.repository.BoardRepository;
@@ -39,11 +40,12 @@ public class DashboardController {
     private final NoticeRepository noticeRepository;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final PageViewStatsService pageViewStatsService;
 
     @GetMapping("/admin/dashboard")
     public String dashboard(@RequestParam(value = "ktxPage", defaultValue = "1") int ktxPage,
                             Model model) {
-        DailyViewsDTO dailyViews = new DailyViewsDTO(1234, 567, 89, 345);
+        DailyViewsDTO dailyViews = pageViewStatsService.getTotals();
 
         WeeklyStatsDTO weeklyStats = new WeeklyStatsDTO(
                 Arrays.asList("월", "화", "수", "목", "금", "토", "일"),
@@ -154,4 +156,26 @@ public class DashboardController {
                 entity.getSeats()
         );
     }
+
+    @GetMapping("/parking")
+    public String parkin1() {
+        return "redirect:/parking/output";
+    }
+
+    @GetMapping("/mobility/ktx")
+    public String mobility1() {
+        return "redirect:/ktx";
+    }
+
+    @GetMapping("/mobility/bike")
+    public String mobility2() {
+        return "redirect:/bike";
+    }
+
+    @GetMapping("/dashboard/security/again")
+    public String security1(@RequestParam(value = "page", defaultValue = "1") int page,
+                            Model model) {
+        return security(page, model);
+    }
+
 }

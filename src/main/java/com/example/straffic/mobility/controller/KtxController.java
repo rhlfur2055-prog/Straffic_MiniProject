@@ -1,5 +1,6 @@
 package com.example.straffic.mobility.controller;
 
+import com.example.straffic.dashboard.service.PageViewStatsService;
 import com.example.straffic.mobility.entity.KtxReservationEntity;
 import com.example.straffic.mobility.entity.KtxTrainEntity;
 import com.example.straffic.mobility.repository.KtxReservationRepository;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class KtxController {
 
+    private final PageViewStatsService pageViewStatsService;
     private final KtxReservationRepository reservationRepository;
     private final KtxTrainRepository trainRepository;
 
@@ -108,6 +110,7 @@ public class KtxController {
 
     @GetMapping("/ktx")
     public String ktxMain(Model model) {
+        pageViewStatsService.increaseView("KTX");
         model.addAttribute("pageTitle", "KTX 예매");
         return "mobility/ktx";
     }

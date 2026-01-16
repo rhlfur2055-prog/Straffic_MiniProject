@@ -1,5 +1,6 @@
 package com.example.straffic.parking.controller;
 
+import com.example.straffic.dashboard.service.PageViewStatsService;
 import com.example.straffic.parking.entity.ParkingRecordEntity;
 import com.example.straffic.parking.repository.ParkingRecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ParkingController {
     private final ParkingRecordRepository parkingRecordRepository;
+    private final PageViewStatsService pageViewStatsService;
 
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     @GetMapping("/parking/output")
     public String parkingOutput(Model model) {
+        pageViewStatsService.increaseView("PARKING");
         model.addAttribute("pageTitle", "주차장 요금");
         model.addAttribute("spots", getSpots());
         return "parking/output";
