@@ -98,8 +98,36 @@ body, main, .container, .wrap {
     line-height: 1.6; 
 }
 
+/* 파일 업로드 필드 스타일링 */
+.notice-form-wrapper form input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+.notice-form-wrapper form input[type="file"]::file-selector-button {
+    margin-right: 16px;
+    background: #e5f0ff;
+    border: 1px solid #c2d4ff;
+    border-radius: 6px;
+    color: var(--primary-color);
+    padding: 8px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.notice-form-wrapper form input[type="file"]::file-selector-button:hover {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
 /* 버튼 영역 */
-.notice-form-wrapper form > div:last-child { 
+.form-actions { 
     margin-top: 30px; 
     display: flex; 
     gap: 12px; 
@@ -109,6 +137,43 @@ body, main, .container, .wrap {
     width: 100%;
 }
 
+/* 게시글 등록 기본 버튼을 브랜드 블루 계열로 통일 */
+.btn-primary { 
+    padding: 14px 28px; 
+    border-radius: 8px; 
+    background: var(--primary-color); 
+    color: #fff; 
+    border: none; 
+    cursor: pointer; 
+    font-weight: 700; 
+    font-size: 1rem; 
+    transition: background 0.2s, box-shadow 0.2s; 
+    white-space: nowrap;
+}
+.btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 10px rgba(0, 81, 199, 0.35); }
+.btn-primary:active { background: #003f9e; box-shadow: none; }
+.btn-primary:disabled, .btn-primary[disabled] { background: #d9e6ff; color: #8ea4c7; cursor: not-allowed; box-shadow: none; }
+
+/* 취소·목록 버튼을 블루 아웃라인 보조 버튼으로 정리 */
+.btn-secondary { 
+    padding: 14px 28px; 
+    border-radius: 8px; 
+    background: #e5f0ff; 
+    color: var(--primary-hover); 
+    text-decoration: none; 
+    border: 1px solid var(--border-color); 
+    font-weight: 700; 
+    font-size: 1rem; 
+    transition: all 0.2s; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    white-space: nowrap;
+}
+.btn-secondary:hover { background: #f0f7ff; color: var(--primary-color); border-color: var(--primary-color); }
+.btn-secondary:active { background: var(--primary-hover); color: #fff; border-color: var(--primary-hover); }
+.btn-secondary:disabled, .btn-secondary[disabled] { background: #ecf3ff; color: #9bb0d6; border-color: #c2d4ff; cursor: not-allowed; box-shadow: none; }
+
 /* Mobile */
 @media (max-width: 768px) {
     .layout-content { 
@@ -116,6 +181,12 @@ body, main, .container, .wrap {
     }
     .notice-form-wrapper {
         padding: 24px 20px;
+        width: 100%;
+    }
+    .form-actions {
+        flex-direction: column-reverse; /* 모바일에서는 세로 배치, 등록이 위로 가게 하려면 column-reverse 사용 안함. 등록이 아래면 column-reverse? 보통 등록이 중요하므로 위나 아래... 여기서는 그냥 놔두거나 full width로 */
+    }
+    .btn-primary, .btn-secondary {
         width: 100%;
     }
 }

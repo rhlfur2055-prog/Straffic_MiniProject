@@ -1,16 +1,22 @@
 package com.example.straffic.member.serviceImp;
 
+import com.example.straffic.board.entity.BoardEntity;
+import com.example.straffic.board.repository.BoardRepository;
+import com.example.straffic.board.repository.CommentRepository;
 import com.example.straffic.member.dto.MemberCreateDTO;
 import com.example.straffic.member.entity.MemberEntity;
 import com.example.straffic.member.repository.MemberInfo;
 import com.example.straffic.member.repository.MemberRepository;
 import com.example.straffic.member.service.MemberService;
+import com.example.straffic.mobility.repository.KtxReservationRepository;
+import com.example.straffic.notice.repository.NoticeRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +25,10 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final KtxReservationRepository ktxReservationRepository;
+    private final NoticeRepository noticeRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public void memberinsert(MemberCreateDTO memberDTO, HttpServletResponse response) {
@@ -56,14 +66,28 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public void deleteSelf(String memberId, String rawPassword) {
         MemberEntity member = memberRepository.findOneById(memberId);
         if (member == null) {
             throw new IllegalStateException("회원 정보를 찾을 수 없습니다.");
         }
-        if (!bCryptPasswordEncoder.matches(rawPassword, member.getPw())) {
-            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        if (member.getProvider() == null) {
+            if (!bCryptPasswordEncoder.matches(rawPassword, member.getPw())) {
+                throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+            }
         }
+        
+        // 연관 데이터 삭제 (순서 중요: 댓글 -> 게시글 -> 공지 -> KTX -> 회원)
+        commentRepository.removeByAuthor(member);
+
+        // 게시글 삭제 (Cascade를 위해 조회 후 삭제)
+        List<BoardEntity> boards = boardRepository.findByAuthor(member);
+        boardRepository.deleteAll(boards);
+
+        noticeRepository.deleteByAuthor(member);
+        ktxReservationRepository.deleteByMemberId(memberId);
+        
         memberRepository.delete(member);
     }
 

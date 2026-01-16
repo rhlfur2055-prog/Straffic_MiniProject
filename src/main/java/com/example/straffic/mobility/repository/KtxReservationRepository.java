@@ -10,5 +10,6 @@ public interface KtxReservationRepository extends JpaRepository<KtxReservationEn
 
     List<KtxReservationEntity> findByTrainNoAndTravelDate(String trainNo, LocalDate travelDate);
     List<KtxReservationEntity> findByMemberIdOrderByReservedAtDesc(String memberId);
+    void deleteByMemberId(String memberId);
 }
 

@@ -145,8 +145,19 @@ public class DashboardController {
                 ? entity.getTotalPrice().toString()
                 : null;
 
+        String memberId = entity.getMemberId();
+        if (memberId != null) {
+            boolean isSocial = memberId.startsWith("naver_") || memberId.startsWith("kakao_") || memberId.startsWith("google_");
+            if (isSocial) {
+                int idx = memberId.indexOf("_");
+                if (idx != -1 && memberId.length() > idx + 4) {
+                    memberId = memberId.substring(0, idx + 4);
+                }
+            }
+        }
+
         return new KtxReservationSummaryDTO(
-                entity.getMemberId(),
+                memberId,
                 entity.getPassengerCount(),
                 entity.getTrainNo(),
                 entity.getDeparture(),

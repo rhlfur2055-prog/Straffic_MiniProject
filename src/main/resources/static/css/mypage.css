@@ -60,13 +60,14 @@
     border-radius: 10px;
     padding: 14px 16px;
     background: #fafafa;
+    max-width: 360px;
 }
 
 .info-row {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 30px;
+    gap: 8px;
 }
 
 .info-label {
@@ -80,15 +81,23 @@
 }
 
 .form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .form-row {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
+}
+
+.form-row .text-input {
+    max-width: 260px;
+}
+
+.form-grid .text-input {
+    max-width: 260px;
 }
 
 .text-input {
@@ -156,6 +165,30 @@
     justify-content: center;
     margin: 0 auto 12px auto;
     color: #3b5bdb;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-photo-form input[type="file"] {
+    display: none;
+}
+
+.profile-photo-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 22px;
 }
 
 .empty-state {

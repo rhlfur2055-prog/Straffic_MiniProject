@@ -1,5 +1,6 @@
 package com.example.straffic.notice.repository;
 
+import com.example.straffic.member.entity.MemberEntity;
 import com.example.straffic.notice.entity.NoticeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,5 +22,7 @@ public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
 
     // 최신 공지 3개 조회 (상단 고정 무시, 작성일 내림차순)
     List<NoticeEntity> findTop3ByOrderByCreatedAtDesc();
+
+    void deleteByAuthor(MemberEntity author);
 }
 

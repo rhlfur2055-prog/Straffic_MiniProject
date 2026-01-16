@@ -1,6 +1,7 @@
 package com.example.straffic.board.repository;
 
 import com.example.straffic.board.entity.BoardEntity;
+import com.example.straffic.member.entity.MemberEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,4 +35,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     @Query("select count(b) from BoardEntity b where b.createdAt >= :start and b.createdAt < :end")
     long countByCreatedAtBetween(@Param("start") java.time.LocalDateTime start,
                                  @Param("end") java.time.LocalDateTime end);
+
+    List<BoardEntity> findByAuthor(MemberEntity author);
+
+    void deleteByAuthor(MemberEntity author);
 }

@@ -31,6 +31,7 @@ public class MyPageController {
         List<KtxHistoryDTO> ktxReservations;
         boolean hasProfileImage = false;
         String provider = null;
+        String displayMemberId = memberId;
         if (memberId == null) {
             ktxReservations = List.of();
         } else {
@@ -42,10 +43,22 @@ public class MyPageController {
             hasProfileImage = member != null && member.getProfileImageData() != null;
             if (member != null) {
                 provider = member.getProvider();
+                if (provider != null) {
+                    int idx = memberId.indexOf('_');
+                    if (idx != -1 && idx + 1 < memberId.length()) {
+                        String prefix = memberId.substring(0, idx + 1);
+                        String rest = memberId.substring(idx + 1);
+                        if (rest.length() > 3) {
+                            rest = rest.substring(0, 3);
+                        }
+                        displayMemberId = prefix + rest;
+                    }
+                }
             }
         }
         model.addAttribute("pageTitle", "마이페이지");
         model.addAttribute("memberId", memberId);
+        model.addAttribute("displayMemberId", displayMemberId);
         model.addAttribute("ktxReservations", ktxReservations);
         model.addAttribute("hasProfileImage", hasProfileImage);
         model.addAttribute("provider", provider);
