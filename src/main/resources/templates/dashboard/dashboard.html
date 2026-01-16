@@ -17,10 +17,9 @@
                 <div class="dashboard-sidebar-title">메뉴</div>
                 <nav class="dashboard-sidebar-nav">
                     <a href="/admin/dashboard" class="dashboard-sidebar-item active">대시보드</a>
-                    <a href="/parking" class="dashboard-sidebar-item">주차장</a>
-                    <a href="/mobility/ktx" class="dashboard-sidebar-item">KTX</a>
-                    <a href="/mobility/bike" class="dashboard-sidebar-item">자전거</a>
-                    <a href="/mobility/subway" class="dashboard-sidebar-item">지하철</a>
+                    <a href="/parking/output" class="dashboard-sidebar-item">주차장</a>
+                    <a href="/ktx" class="dashboard-sidebar-item">KTX</a>
+                    <a href="/bike" class="dashboard-sidebar-item">자전거</a>
                     <a href="/board/list" class="dashboard-sidebar-item">게시판</a>
                     <a href="/notice/list" class="dashboard-sidebar-item">공지사항</a>
                     <a href="/dashboard/security" class="dashboard-sidebar-item">보안관리</a>
@@ -30,20 +29,20 @@
             <div class="dashboard-content">
                 <div class="dashboard-summary-row">
                     <div class="summary-card parking">
-                        <div class="summary-title">주차장 전체 조회수 (오늘)</div>
+                        <div class="summary-title">주차장 전체 조회수 (일간)</div>
                         <div class="summary-value" th:text="${dailyViews != null ? dailyViews.parking : 0}">0</div>
                     </div>
                     <div class="summary-card ktx">
-                        <div class="summary-title">KTX 전체 조회수 (오늘)</div>
+                        <div class="summary-title">KTX 전체 조회수 (일간)</div>
                         <div class="summary-value" th:text="${dailyViews != null ? dailyViews.ktx : 0}">0</div>
                     </div>
                     <div class="summary-card bike">
-                        <div class="summary-title">자전거 전체 조회수 (오늘)</div>
+                        <div class="summary-title">자전거 전체 조회수 (일간)</div>
                         <div class="summary-value" th:text="${dailyViews != null ? dailyViews.bike : 0}">0</div>
                     </div>
                     <!--
                     <div class="summary-card subway">
-                        <div class="summary-title">지하철 전체 조회수 (오늘)</div>
+                        <div class="summary-title">지하철 전체 조회수 (일간)</div>
                         <div class="summary-value" th:text="${dailyViews != null ? dailyViews.subway : 0}">0</div>
                     </div>
                     -->
