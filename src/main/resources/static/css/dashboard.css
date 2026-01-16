@@ -78,7 +78,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
 }
 
 .summary-title {
@@ -87,9 +87,11 @@
 }
 
 .summary-value {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--text-main);
+    text-align: center;
+    margin-top: 18px;
 }
 
 .summary-card.parking .summary-value { color: var(--primary-hover); }
